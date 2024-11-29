@@ -1,0 +1,21 @@
+dashboardBody(
+  tags$head(
+    tags$link(rel = "icon", type = "image/png", href = "https://www.bps.go.id/_next/image?url=%2Fassets%2Flogo-bps.png&w=1080&q=75")
+  ),
+  tags$script(HTML("$('body').addClass('fixed');")),
+  tabItems(
+    source("ui/tabs/upload_data.R")$value,
+    source("ui/tabs/ihk_bulanan.R")$value,
+    source("ui/tabs/ihk_triwulanan.R")$value,
+    source("ui/tabs/inflasi_mtm.R")$value,
+    source("ui/tabs/inflasi_mtm_komoditas.R")$value,
+    source("ui/tabs/inflasi_ytd.R")$value,
+    source("ui/tabs/inflasi_yoy.R")$value,
+    source("ui/tabs/inflasi_triwulanan.R")$value,
+    source("ui/tabs/share_mtm.R")$value,
+    source("ui/tabs/share_ytd.R")$value,
+    source("ui/tabs/share_yoy.R")$value,
+    source("ui/tabs/download_data.R")$value,
+    source("ui/tabs/glosarium.R")$value
+  )
+)
