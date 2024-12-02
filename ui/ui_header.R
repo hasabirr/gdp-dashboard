@@ -1,1 +1,1 @@
-dashboardHeader(title = "Dashboard IHK Kabupaten Rembang")
+dashboardHeader(title = "Dashboard PDRB Kabupaten Rembang")

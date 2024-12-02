@@ -4,18 +4,18 @@ dashboardBody(
   ),
   tags$script(HTML("$('body').addClass('fixed');")),
   tabItems(
-    source("ui/tabs/upload_data.R")$value,
-    source("ui/tabs/ihk_bulanan.R")$value,
-    source("ui/tabs/ihk_triwulanan.R")$value,
-    source("ui/tabs/inflasi_mtm.R")$value,
-    source("ui/tabs/inflasi_mtm_komoditas.R")$value,
-    source("ui/tabs/inflasi_ytd.R")$value,
-    source("ui/tabs/inflasi_yoy.R")$value,
-    source("ui/tabs/inflasi_triwulanan.R")$value,
-    source("ui/tabs/share_mtm.R")$value,
-    source("ui/tabs/share_ytd.R")$value,
-    source("ui/tabs/share_yoy.R")$value,
-    source("ui/tabs/download_data.R")$value,
-    source("ui/tabs/glosarium.R")$value
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/upload_data.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/ihk_bulanan.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/ihk_triwulanan.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/inflasi_mtm.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/inflasi_mtm_komoditas.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/inflasi_ytd.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/inflasi_yoy.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/inflasi_triwulanan.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/share_mtm.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/share_ytd.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/share_yoy.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/download_data.R")$value,
+    source("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/ui/tabs/glosarium.R")$value
   )
 )
