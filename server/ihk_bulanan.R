@@ -3,6 +3,16 @@ observe({
   updateSelectInput(session, "kode_komoditas", choices = unique(ihk_tahunan$`Kode Komoditas`))
 })
 
+years_in_data <- colnames(pdrb_data) %>%
+  grep("^\\d{4}_", ., value = TRUE) %>%
+  gsub("_.*", "", .) %>%  # Hanya ambil 4 digit pertama (tahun)
+  unique()
+
+# Update input tahun
+output$tahun_pdrb <- renderUI({
+  selectInput("tahun_pdrb", "Pilih Tahun:", choices = years_in_data)
+})
+
 # Update daftar kode komoditas berdasarkan Flag dan checkbox yang dipilih
 output$kodeKomoditasUI <- renderUI({
   req(ihk_tahunan)
