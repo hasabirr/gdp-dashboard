@@ -2,11 +2,10 @@
 
 # Render DataTable untuk glosarium komoditas
 output$table_glosarium <- renderDataTable({
-  req(ihk_tahunan)  # Pastikan ihk_tahunan tersedia
   
   # Pilih kolom Kode Komoditas dan Nama Komoditas
-  data_glosarium <- ihk_tahunan %>%
-    select(`Kode Komoditas`, `Nama Komoditas`) %>%
+  data_glosarium <- adhb %>%
+    select(kode, nama) %>%
     distinct()  # Menghilangkan duplikat jika ada
   
   # Tampilkan DataTable

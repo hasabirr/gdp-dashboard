@@ -1,9 +1,9 @@
 # CHART 1 - General
 
 # Update flag di dropdown
-# observe({
-#   updateSelectInput(session, "flag_pdrb", choices = unique(adhb$flag))
-# })
+observe({
+  updateSelectInput(session, "flag_pdrb", choices = unique(adhb$flag))
+})
 
 output$kodeUI_pdrb <- renderUI({
   kode_choices <- adhb %>%
@@ -78,9 +78,9 @@ output$pdrb_plot <- renderPlotly({
 
 # CHART 2 - Line Chart
 
-# observe({
-#   updateSelectInput(session, "flag_line", choices = unique(adhb$flag))
-# })
+observe({
+  updateSelectInput(session, "flag_line", choices = unique(adhb$flag))
+})
 
 output$kodeUI_line <- renderUI({
   req(input$flag_line)

@@ -10,10 +10,10 @@ tabItem(
     }
   "))
   ),
-  tabName = "glosarium_komoditas",
+  tabName = "glosarium",
   fluidRow(
     box(
-      title = "Glosarium Kode dan Nama Komoditas", 
+      title = "Glosarium Kode dan Nama Lapangan Usaha", 
       width = 12, status = "primary", solidHeader = TRUE,
       DT::DTOutput("table_glosarium")  # Output DT
     )
