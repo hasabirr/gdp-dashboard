@@ -4,6 +4,7 @@ dashboardBody(
   ),
   tags$script(HTML("$('body').addClass('fixed');")),
   tabItems(
-    source("ui/tabs/adhb_general.R")$value
+    source("ui/tabs/adhb_general.R")$value,
+    source("ui/tabs/upload_data.R")$value
   )
 )
