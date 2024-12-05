@@ -43,8 +43,7 @@ implisit_tahunan <- adhb_tahunan_total %>%
   mutate(implisit = (nilai_adhb / nilai_adhk) * 100) %>%
   mutate(laju_implisit = (implisit / lag(implisit))*100 - 100)
 
-# CHART
-
+# CHART 1 ======================================================================
 observe({
   updateSelectInput(session, "flag_laju", choices = unique(adhb$flag))
 })
@@ -88,7 +87,7 @@ output$tahun_laju <- renderUI({
   tahun_min <- min(as.integer(sub("_.*", "", kolom_tahun))) 
   tahun_max <- max(as.integer(sub("_.*", "", kolom_tahun)))
   
-  sliderInput("tahun_range", "Pilih Rentang Tahun:",
+  sliderInput("tahun_laju", "Pilih Rentang Tahun:",
               min = tahun_min, max = tahun_max,
               value = c(tahun_min, tahun_max),
               step = 1, animate = TRUE)
@@ -114,51 +113,22 @@ output$line_laju <- renderPlotly({
   
   # Filter data berdasarkan periode
   if (input$periode_laju == "Triwulanan") {
-    # Filter data sesuai rentang tahun pada kolom periode
     filtered_data <- filtered_data %>%
-      filter(as.integer(sub("_.*", "", periode)) >= input$tahun_range[1] &
-               as.integer(sub("_.*", "", periode)) <= input$tahun_range[2])
+      filter(as.integer(substr(periode, 1, 4)) >= input$tahun_laju[1] &
+               as.integer(substr(periode, 1, 4)) <= input$tahun_laju[2])
     
-    # Ubah periode ke format yang lebih user-friendly
     long_data <- filtered_data %>%
       select(kode, nama, periode, laju_implisit) %>%
-      mutate(periode = gsub("_", ".", periode))  # Contoh: 2017_1 -> 2017.1
+      mutate(periode = gsub("_", ".", periode))
     
   } else if (input$periode_laju == "Tahunan") {
-    # Tambahkan kolom tahun untuk aggregasi tahunan
     filtered_data <- implisit_2 %>%
       filter(flag == input$flag_laju, 
              kode %in% input$kode_laju)
     
     long_data <- filtered_data %>%
-      filter(as.integer(sub("_.*", "", periode)) >= input$tahun_range[1] &
-               as.integer(sub("_.*", "", periode)) <= input$tahun_range[2])
-    # filtered_data <- filtered_data %>%
-    #   select(flag, kode, nama, periode, adhb, adhk) %>%
-    #   mutate(tahun = substr(periode, 1, 4))  # Ambil 4 karakter pertama dari kolom periode untuk tahun
-    # 
-    # # Menjumlahkan nilai untuk setiap kategori per tahun, flag, dan kode
-    # long_data_temp <- filtered_data %>%
-    #   group_by(tahun, flag, kode, nama) %>%
-    #   summarise(
-    #     total_adhb = sum(adhb, na.rm = TRUE),
-    #     total_adhk = sum(adhk, na.rm = TRUE)
-    #   ) %>%
-    #   mutate(implisit = (total_adhb / total_adhk) * 100) 
-    # 
-    # long_data <- long_data_temp %>%
-    #   mutate(laju_implisit = implisit / lag(implisit, 1)) %>%
-    #   rename(periode = tahun)
-    # # 
-    # long_data <- filtered_data %>%
-    #   mutate(tahun = as.integer(sub("_.*", "", periode))) %>% # Ekstrak tahun dari periode
-    #   filter(tahun >= input$tahun_range[1] & tahun <= input$tahun_range[2]) %>% # Filter berdasarkan rentang tahun
-    #   group_by(kode, nama, tahun) %>%
-    #   summarise(
-    #     laju_implisit = mean(laju_implisit, na.rm = TRUE), # Hitung rata-rata laju_implisit
-    #     .groups = "drop"
-    #   ) %>%
-    #   rename(periode = tahun) # Ganti nama kolom tahun menjadi periode
+      filter(as.integer(periode) >= input$tahun_laju[1] &
+               as.integer(periode) <= input$tahun_laju[2])
   } else {
     stop("Nilai input$periode_laju tidak valid.")
   }
@@ -167,7 +137,6 @@ output$line_laju <- renderPlotly({
     need(nrow(long_data) > 0, "Tidak ada data untuk filter yang dipilih.")
   )
   
-  # Plot menggunakan Plotly
   plotly::plot_ly(
     data = long_data,
     x = ~periode,
@@ -189,8 +158,7 @@ output$line_laju <- renderPlotly({
     )
 })
 
-# 
-# CHART 3 - Line Simple Chart
+# CHART 2 - Line Simple Chart ==================================================
 output$tahun_laju_simple <- renderUI({
 
   kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
@@ -211,39 +179,39 @@ output$periode_laju_simple <- renderUI({
 
 output$line_laju_simple <- renderPlotly({
 
+  req(input$periode_laju_simple)
+  
   kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
 
   tahun_range <- as.integer(input$tahun_laju_simple)
   kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
                                   as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
-
-  # data_filtered <- adhb %>%
-  #   filter(periode in)
-  #   select(c(kode, nama, all_of(kolom_terpilih)))
-
-  if (input$periode_simple == "Triwulanan") {
-    long_data <- ad
-
-  } else if (input$periode_simple == "Tahunan") {
-    long_data <- data_filtered %>%
-      tidyr::pivot_longer(
-        cols = -c(kode, nama),
-        names_to = "periode",
-        values_to = "nilai"
-      ) %>%
-      mutate(tahun = gsub("_", ".", periode)) %>%
-      mutate(tahun = as.integer(substr(periode, 1, 4))) %>%
-      group_by(tahun) %>%
-      summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop") %>%
-      mutate(periode = as.character(tahun))
+  
+  if (input$periode_laju_simple == "Triwulanan") {
+    long_data <- implisit_triwulanan %>%
+      filter(as.integer(sub("\\..*", "", periode)) >= input$tahun_laju_simple[1] &
+               as.integer(sub("\\..*", "", periode)) <= input$tahun_laju_simple[2])
+    
+    # long_data <- filtered_data %>%
+    #   select(kode, nama, periode, laju_implisit) %>%
+    #   mutate(periode = gsub("_", ".", periode))
+    
+  } else if (input$periode_laju_simple == "Tahunan") {
+    # long_ <- implisit_2 %>%
+    #   filter(flag == input$flag_laju, 
+    #          kode %in% input$kode_laju)
+    
+    long_data <- implisit_tahunan %>%
+      filter(as.integer(periode) >= input$tahun_laju_simple[1] &
+               as.integer(periode) <= input$tahun_laju_simple[2])
   } else {
-    long_data <- NULL
+    stop("Nilai input$periode_laju tidak valid.")
   }
 
   plotly::plot_ly(
     data = long_data,
     x = ~periode,
-    y = ~nilai,
+    y = ~laju_implisit,
     type = 'scatter',
     mode = 'lines+markers',
     hovertemplate = paste(
@@ -252,8 +220,8 @@ output$line_laju_simple <- renderPlotly({
     )
   ) %>%
     layout(
-      title = paste("Total PDRB ADHB - Periode:", input$periode_simple),
-      xaxis = list(title = ifelse(input$periode_simple == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
+      title = paste("Total PDRB ADHB - Periode:", input$periode_laju_simple),
+      xaxis = list(title = ifelse(input$periode_laju_simple == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
       yaxis = list(title = "Nilai PDRB")
     )
 })
