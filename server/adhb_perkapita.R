@@ -2,36 +2,36 @@
 
 # Update flag di dropdown
 observe({
-  updateSelectInput(session, "flag_adhk", choices = unique(adhk$flag))
+  updateSelectInput(session, "flag_adhb_perkapita", choices = unique(adhb$flag))
 })
 
-output$tahun_adhk_ui <- renderUI({
-  selectInput("tahun_adhk", "Pilih Tahun:", choices = tahun_tersedia, selected = "2023")
+output$tahun_adhb_perkapita_ui <- renderUI({
+  selectInput("tahun_adhb_perkapita", "Pilih Tahun:", choices = tahun_tersedia, selected = "2023")
 })
 
-output$kodeUI_adhk <- renderUI({
-  kode_choices <- adhk %>%
-    filter(flag == input$flag_adhk) %>%
+output$kodeUI_adhb_perkapita <- renderUI({
+  kode_choices <- adhb %>%
+    filter(flag == input$flag_adhb_perkapita) %>%
     pull(kode)
   
-  if (input$select_all_adhk) {
+  if (input$select_all_adhb_perkapita) {
     selected_choices <- kode_choices
   } else {
     selected_choices <- kode_choices[1]
   }
   
-  selectInput("kode_adhk", "Pilih Kode:",
+  selectInput("kode_adhb_perkapita", "Pilih Kode:",
               choices = kode_choices, selected = selected_choices, multiple = TRUE)
 })
 
-output$nama_lapangan_usaha_adhk <- renderText({
-  search_term <- input$search_code_adhk
+output$nama_lapangan_usaha_adhb_perkapita <- renderText({
+  search_term <- input$search_code_adhb_perkapita
   
   if (is.null(search_term) || search_term == "") {
     return("Masukkan kode lapangan usaha")
   }
   
-  nama <- adhk %>%
+  nama <- adhb %>%
     filter(kode == search_term) %>%
     pull(nama)
   
@@ -42,20 +42,20 @@ output$nama_lapangan_usaha_adhk <- renderText({
   }
 })
 
-output$adhk_plot <- renderPlotly({
+output$adhb_perkapita_plot <- renderPlotly({
   
-  triwulan_col <- paste(input$tahun_adhk, 
-                        switch(input$triwulan_adhk,
+  triwulan_col <- paste(input$tahun_adhb_perkapita, 
+                        switch(input$triwulan_adhb_perkapita,
                                "Triwulan 1" = "_1",
                                "Triwulan 2" = "_2",
                                "Triwulan 3" = "_3",
                                "Triwulan 4" = "_4"), sep = "")
   
-  filtered_data <- adhk %>%
+  filtered_data <- adhb_perkapita %>%
     mutate(custom_hover = paste("[", kode, "] ", nama)) %>%
     filter(
-      flag == input$flag_adhk,
-      kode %in% input$kode_adhk
+      flag == input$flag_adhb_perkapita,
+      kode %in% input$kode_adhb_perkapita
     ) %>%
     select(kode, nama, !!sym(triwulan_col), custom_hover) %>%
     rename(PDRB_Value = !!sym(triwulan_col))
@@ -73,7 +73,7 @@ output$adhk_plot <- renderPlotly({
     customdata = ~custom_hover
   ) %>%
     layout(
-      title = paste("PDRB ADHK Tahun", input$tahun_adhk, input$triwulan_adhk),
+      title = paste("PDRB ADHB Tahun", input$tahun_adhb_perkapita, input$triwulan_adhb_perkapita),
       xaxis = list(title = "Kode"),
       yaxis = list(title = "Nilai PDRB"),
       bargap = 0.2
@@ -81,85 +81,87 @@ output$adhk_plot <- renderPlotly({
 })
 
 # CHART 2 - Line Chart
-
 observe({
-  updateSelectInput(session, "flag_line_adhk", choices = unique(adhk$flag))
+  updateSelectInput(session, "flag_adhb_perkapita_line", choices = unique(adhb$flag))
 })
 
-output$kodeUI_line_adhk <- renderUI({
-  req(input$flag_line_adhk)
+output$kodeUI_adhb_perkapita_line <- renderUI({
+  req(input$flag_adhb_perkapita_line)
   
   kode_choices <- adhb %>%
-    filter(flag == input$flag_line_adhk) %>%
+    filter(flag == input$flag_adhb_perkapita_line) %>%
     pull(kode)
   
-  if (input$select_all_line_adhk) {
+  if (input$select_all_adhb_perkapita_line) {
     selected_choices <- kode_choices
   } else {
     selected_choices <- kode_choices[1]
   }
   
-  selectInput("kode_line_adhk", "Pilih Kode:",
+  selectInput("kode_adhb_perkapita_line", "Pilih Kode:",
               choices = kode_choices, selected = selected_choices, multiple = TRUE)
 })
 
-output$tahun_range_ui_adhk <- renderUI({
-  kolom_tahun <- grep("^\\d{4}_", names(adhk), value = TRUE)
+output$tahun_adhb_perkapita_line <- renderUI({
+  kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
   
   tahun_min <- min(as.integer(sub("_.*", "", kolom_tahun))) 
   tahun_max <- max(as.integer(sub("_.*", "", kolom_tahun)))
   
-  sliderInput("tahun_range_adhk", "Pilih Rentang Tahun:",
+  sliderInput("tahun_adhb_p_line", "Pilih Rentang Tahun:",
               min = tahun_min, max = tahun_max,
               value = c(tahun_min, tahun_max),
               step = 1, animate = TRUE)
 })
 
-output$periode_filter_ui_adhk <- renderUI({
-  radioButtons("periode_adhk", "Pilih Periode:",
+output$periode_adhb_perkapita_line <- renderUI({
+  radioButtons("periode_adhb_p_line", "Pilih Periode:",
                choices = c("Triwulanan" = "Triwulanan", "Tahunan" = "Tahunan"),
                selected = "Triwulanan")
 })
 
-output$line_adhk <- renderPlotly({
-  req(input$flag_line_adhk)
-  req(input$kode_line_adhk)
-  req(input$periode_adhk)
-  req(input$tahun_range_adhk)
-  
-  kolom_tahun <- grep("^\\d{4}_", names(adhk), value = TRUE)
-  tahun_range <- as.integer(input$tahun_range_adhk)
-  kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] & 
+output$line_adhb_perkapita <- renderPlotly({
+  req(input$periode_adhb_p_line)
+  req(input$tahun_adhb_p_line)
+  # req(input$flag_adhb_perkapita_line)
+  # req(input$kode_adhb_perkapita_line)
+  # req(input$periode_adhb_perkapita_line)
+  # req(input$tahun_adhb_perkapita_line)
+  print("sini")
+  kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
+  tahun_range <- as.integer(input$tahun_adhb_p_line)
+  kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
                                   as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
-  filtered_data <- adhk %>%
-    filter(flag == input$flag_line_adhk, 
-           kode %in% input$kode_line_adhk) %>%
-    select(kode, nama, all_of(kolom_terpilih)) 
-  
+  print("sampe sini")
+  filtered_data <- adhb_perkapita %>%
+    filter(flag == input$flag_adhb_perkapita_line,
+           kode %in% input$kode_adhb_perkapita_line) %>%
+    select(kode, nama, all_of(kolom_terpilih))
+
   nama_data <- filtered_data %>% select(kode, nama)
-  
-  if(input$periode_adhk == "Triwulanan") {
+  print("sampe sinii")
+  if(input$periode_adhb_p_line == "Triwulanan") {
     nama_data <- filtered_data %>% select(kode, nama)
     triwulan_data <- filtered_data %>%
       select(-kode, -nama) %>%
       tidyr::pivot_longer(
-        cols = everything(), 
-        names_to = "periode", 
+        cols = everything(),
+        names_to = "periode",
         values_to = "nilai"
       ) %>%
       mutate(periode = gsub("_", ".", periode))
-    
+
     n_kode <- nrow(filtered_data)
     n_baris_per_kode <- nrow(triwulan_data) / n_kode
-    
+
     triwulan_data$kode <- rep(filtered_data$kode, each = n_baris_per_kode)
-    
+
     long_data <- triwulan_data %>%
       left_join(nama_data, by = "kode")
-    
-  } else if (input$periode_adhk == "Tahunan") {
+
+  } else if (input$periode_adhb_p_line == "Tahunan") {
     triwulan_data <- filtered_data %>%
-      tidyr::pivot_longer(cols = matches("^\\d{4}(_.*)?$"), 
+      tidyr::pivot_longer(cols = matches("^\\d{4}(_.*)?$"),
                           names_to = "periode",
                           values_to = "nilai") %>%
       mutate(periode = as.integer(gsub("_.*", "", periode)))
@@ -170,12 +172,12 @@ output$line_adhk <- renderPlotly({
   } else {
     long_data <- NULL
   }
-  
+  print("sampe siniii")
   # Cek
   if(!"periode" %in% names(long_data)) {
     stop("Kolom 'periode' tidak ditemukan dalam long_data.")
   }
-  
+
   plotly::plot_ly(
     data = long_data,
     x = ~periode,
@@ -191,46 +193,46 @@ output$line_adhk <- renderPlotly({
     )
   ) %>%
     layout(
-      title = paste("Total PDRB ADHK - Periode:", input$periode),
-      xaxis = list(title = ifelse(input$periode == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
+      title = paste("Total PDRB ADHB - Periode:", input$periode_adhb_p_line),
+      xaxis = list(title = ifelse(input$periode_adhb_p_line == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
       yaxis = list(title = "Nilai PDRB")
     )
 })
 
 # CHART 3 - Line Simple Chart
-output$tahun_range_ui_simple_adhk <- renderUI({
+output$tahun_adhb_perkapita_line_simple <- renderUI({
   
-  kolom_tahun <- grep("^\\d{4}_", names(adhk), value = TRUE)
+  kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
   tahun_min <- min(as.integer(sub("_.*", "", kolom_tahun)))
   tahun_max <- max(as.integer(sub("_.*", "", kolom_tahun)))
   
-  sliderInput("tahun_range_simple_adhk", "Pilih Rentang Tahun:",
+  sliderInput("tahun_adhb_p_line_simple", "Pilih Rentang Tahun:",
               min = tahun_min, max = tahun_max,
               value = c(tahun_min, tahun_max),
               step = 1, animate = TRUE)
 })
 
-output$periode_filter_ui_simple_adhk <- renderUI({
-  radioButtons("periode_simple_adhk", "Pilih Periode:",
+output$periode_adhb_perkapita_line_simple <- renderUI({
+  radioButtons("periode_adhb_p_line_simple", "Pilih Periode:",
                choices = c("Triwulanan" = "Triwulanan", "Tahunan" = "Tahunan"),
                selected = "Triwulanan")
 })
 
-output$line_adhk_simple <- renderPlotly({
-  req(input$periode_simple_adhk)
-  req(input$tahun_range_simple_adhk)
-  
-  kolom_tahun <- grep("^\\d{4}_", names(adhk), value = TRUE)
-  
-  tahun_range <- as.integer(input$tahun_range_simple_adhk)
-  kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] & 
+output$line_adhb_perkapita_simple <- renderPlotly({
+  req(input$periode_adhb_p_line_simple)
+  req(input$tahun_adhb_p_line_simple)
+
+  kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
+
+  tahun_range <- as.integer(input$tahun_adhb_p_line_simple)
+  kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
                                   as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
-  
-  data_filtered <- adhk %>%
-    filter(flag == 1) %>% 
+
+  data_filtered <- adhb_perkapita %>%
+    filter(flag == 1) %>%
     select(c(kode, nama, all_of(kolom_terpilih)))
-  
-  if (input$periode_simple_adhk == "Triwulanan") {
+
+  if (input$periode_adhb_p_line_simple == "Triwulanan") {
     long_data <- data_filtered %>%
       tidyr::pivot_longer(
         cols = -c(kode, nama),
@@ -240,8 +242,8 @@ output$line_adhk_simple <- renderPlotly({
       mutate(periode = gsub("_", ".", periode)) %>%
       group_by(periode) %>%
       summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop")
-    
-  } else if (input$periode_simple_adhk == "Tahunan") {
+
+  } else if (input$periode_adhb_p_line_simple == "Tahunan") {
     long_data <- data_filtered %>%
       tidyr::pivot_longer(
         cols = -c(kode, nama),
@@ -256,7 +258,7 @@ output$line_adhk_simple <- renderPlotly({
   } else {
     long_data <- NULL
   }
-  
+
   plotly::plot_ly(
     data = long_data,
     x = ~periode,
@@ -269,15 +271,15 @@ output$line_adhk_simple <- renderPlotly({
     )
   ) %>%
     layout(
-      title = paste("Total PDRB ADHK - Periode:", input$periode_simple),
-      xaxis = list(title = ifelse(input$periode_simple == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
+      title = paste("Total PDRB ADHB - Periode:", input$periode_adhb_p_line_simple),
+      xaxis = list(title = ifelse(input$periode_adhb_p_line_simple == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
       yaxis = list(title = "Nilai PDRB")
     )
 })
 
 # Tabel
-output$adhk_table <- renderDT({
-  data_to_show <- adhk
+output$adhb_perkapita_table <- renderDT({
+  data_to_show <- adhb_perkapita
   datatable(data_to_show, 
             options = list(
               pageLength = 10,         

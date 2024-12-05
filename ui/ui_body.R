@@ -7,6 +7,7 @@ dashboardBody(
     source("ui/tabs/adhb_general.R")$value,
     source("ui/tabs/adhk_general.R")$value,
     source("ui/tabs/laju_implisit.R")$value,
+    source("ui/tabs/adhb_perkapita.R")$value,
     source("ui/tabs/glosarium.R")$value
     # source("ui/tabs/upload_data.R")$value
   )

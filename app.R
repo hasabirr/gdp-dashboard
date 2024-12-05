@@ -86,18 +86,24 @@ server <- function(input, output, session) {
   population <- gsheet2tbl('docs.google.com/spreadsheets/d/1ACQnSbPG6oDPEc0o3oVF-gdyoImhSXzLe0rS3d_xxiQ/edit?gid=0#gid=0')
   
   calculate_per_capita <- function(adhb, population) {
+    # Menentukan kolom-kolom yang mengandung data tahun secara dinamis
+    tahun_columns <- grep("^\\d{4}", names(adhb), value = TRUE)
+    
+    # Pivot data dari wide ke long berdasarkan kolom tahun yang ditemukan
     adhb_long <- adhb %>%
-      tidyr::pivot_longer(cols = starts_with("2017") | starts_with("2018") | starts_with("2019") | starts_with("2020"),
-                   names_to = "year_quarter", values_to = "PDRB") %>%
+      tidyr::pivot_longer(cols = all_of(tahun_columns), 
+                          names_to = "year_quarter", values_to = "PDRB") %>%
       mutate(
-        year = as.numeric(substr(year_quarter, 1, 4)),
-        quarter = as.numeric(substr(year_quarter, 6, 6))
+        year = as.numeric(substr(year_quarter, 1, 4)),  # Extract tahun
+        quarter = as.numeric(substr(year_quarter, 6, 6))  # Extract triwulan
       )
     
+    # Menggabungkan dengan data populasi
     adhb_long <- adhb_long %>%
       left_join(population, by = c("year" = "periode")) %>%
       mutate(PDRB_per_capita = PDRB / population)
-
+    
+    # Pivot kembali menjadi wide untuk setiap tahun dan triwulan
     adhb_wide <- adhb_long %>%
       select(flag, kode, nama, year_quarter, PDRB_per_capita) %>%
       tidyr::pivot_wider(names_from = year_quarter, values_from = PDRB_per_capita)
@@ -106,12 +112,12 @@ server <- function(input, output, session) {
   }
   
   # Panggil fungsi untuk menghitung PDRB per kapita
-  adhb_per_capita <- calculate_per_capita(adhb, population)
-  adhk_per_capita <- calculate_per_capita(adhk, population)
-  # adhb_triwulanan_per_capita <- calculate_per_capita(adhb_triwulanan_total, population)
-  # adhb_tahunan_per_capita <- calculate_per_capita(adhb_tahunan_total, population)
-  # adhk_triwulanan_per_capita <- calculate_per_capita(adhk_triwulanan_total, population)
-  # adhk_tahunan_per_capita <- calculate_per_capita(adhk_tahunan_total, population)
+  adhb_perkapita <- calculate_per_capita(adhb, population)
+  adhk_perkapita <- calculate_per_capita(adhk, population)
+  # adhb_triwulanan_perkapita <- calculate_per_capita(adhb_triwulanan_total, population)
+  # adhb_tahunan_perkapita <- calculate_per_capita(adhb_tahunan_total, population)
+  # adhk_triwulanan_perkapita <- calculate_per_capita(adhk_triwulanan_total, population)
+  # adhk_tahunan_perkapita <- calculate_per_capita(adhk_tahunan_total, population)
   
   # SERVER SIDEBAR =============================================================
   output$pdrb_general <- renderMenu({
@@ -157,6 +163,7 @@ server <- function(input, output, session) {
   source("server/adhb_general.R", local = TRUE)
   source("server/adhk_general.R", local = TRUE)
   source("server/laju_implisit.R", local = TRUE)
+  source("server/adhb_perkapita.R", local = TRUE)
   source("server/glosarium.R", local = TRUE)
   # lengkapi untuk source lainnya
 }
