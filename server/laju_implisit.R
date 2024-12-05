@@ -192,14 +192,7 @@ output$line_laju_simple <- renderPlotly({
       filter(as.integer(sub("\\..*", "", periode)) >= input$tahun_laju_simple[1] &
                as.integer(sub("\\..*", "", periode)) <= input$tahun_laju_simple[2])
     
-    # long_data <- filtered_data %>%
-    #   select(kode, nama, periode, laju_implisit) %>%
-    #   mutate(periode = gsub("_", ".", periode))
-    
   } else if (input$periode_laju_simple == "Tahunan") {
-    # long_ <- implisit_2 %>%
-    #   filter(flag == input$flag_laju, 
-    #          kode %in% input$kode_laju)
     
     long_data <- implisit_tahunan %>%
       filter(as.integer(periode) >= input$tahun_laju_simple[1] &
@@ -226,17 +219,55 @@ output$line_laju_simple <- renderPlotly({
     )
 })
 
-# Tabel
+# Reactive value to store the selected dataset
+selected_data <- reactiveVal(implisit)
+
+# Observe button clicks to update the dataset
+observeEvent(input$data_grafik1_triwulanan, {
+  selected_data(implisit)
+})
+
+observeEvent(input$data_grafik1_tahunan, {
+  selected_data(implisit_2)
+})
+
+observeEvent(input$data_grafik2_triwulanan, {
+  selected_data(implisit_triwulanan)
+})
+
+observeEvent(input$data_grafik2_tahunan, {
+  selected_data(implisit_tahunan)
+})
+
+# Render the table dynamically
 output$laju_table <- renderDT({
-  data_to_show <- adhb
-  datatable(data_to_show, 
-            options = list(
-              pageLength = 10,         
-              lengthMenu = c(10, 20, 50), 
-              scrollX = TRUE,     
-              autoWidth = TRUE,    
-              columnDefs = list(list(width = '200px', targets = 2),
-                                list(width = '100%', targets = "_all"))
-            ),
-            rownames = FALSE) 
+  datatable(
+    selected_data(),
+    options = list(
+      pageLength = 10,         # Default rows per page
+      lengthMenu = c(10, 20, 50), # Options for rows per page
+      scrollX = TRUE,          # Enable horizontal scrolling
+      autoWidth = TRUE,        # Automatically adjust column widths
+      columnDefs = list(
+        list(width = '200px', targets = 2), # Set specific width for column 2
+        list(width = '100%', targets = "_all") # Set remaining columns to auto-width
+      )
+    ),
+    rownames = FALSE # Do not show row names
+  ) 
+})
+
+# Dynamic title for the box
+output$dynamic_box_title <- renderText({
+  if (input$data_grafik1_triwulanan > 0) {
+    "Data Grafik 1 Triwulanan"
+  } else if (input$data_grafik1_tahunan > 0) {
+    "Data Grafik 1 Tahunan"
+  } else if (input$data_grafik2_triwulanan > 0) {
+    "Data Grafik 2 Triwulanan"
+  } else if (input$data_grafik2_tahunan > 0) {
+    "Data Grafik 2 Tahunan"
+  } else {
+    "Pilih Data Grafik"
+  }
 })

@@ -29,6 +29,8 @@ server <- function(input, output, session) {
     mutate(kode = factor(kode)) %>%
     mutate(across(4:ncol(.), ~ round(., 4)))
   
+  tahun_tersedia <- unique(substr(names(adhb)[grepl("_", names(adhb))], 1, 4))
+  
   adhb_triwulanan_total <- adhb %>%
     filter(flag == 1) %>%
     tidyr::pivot_longer(
@@ -81,6 +83,36 @@ server <- function(input, output, session) {
     summarise(nilai_adhk = sum(nilai_adhk, na.rm = TRUE), .groups = "drop") %>%
     mutate(periode = as.character(tahun)) %>% select(-tahun)
   
+  population <- gsheet2tbl('docs.google.com/spreadsheets/d/1ACQnSbPG6oDPEc0o3oVF-gdyoImhSXzLe0rS3d_xxiQ/edit?gid=0#gid=0')
+  
+  calculate_per_capita <- function(adhb, population) {
+    adhb_long <- adhb %>%
+      tidyr::pivot_longer(cols = starts_with("2017") | starts_with("2018") | starts_with("2019") | starts_with("2020"),
+                   names_to = "year_quarter", values_to = "PDRB") %>%
+      mutate(
+        year = as.numeric(substr(year_quarter, 1, 4)),
+        quarter = as.numeric(substr(year_quarter, 6, 6))
+      )
+    
+    adhb_long <- adhb_long %>%
+      left_join(population, by = c("year" = "periode")) %>%
+      mutate(PDRB_per_capita = PDRB / population)
+
+    adhb_wide <- adhb_long %>%
+      select(flag, kode, nama, year_quarter, PDRB_per_capita) %>%
+      tidyr::pivot_wider(names_from = year_quarter, values_from = PDRB_per_capita)
+    
+    return(adhb_wide)
+  }
+  
+  # Panggil fungsi untuk menghitung PDRB per kapita
+  adhb_per_capita <- calculate_per_capita(adhb, population)
+  adhk_per_capita <- calculate_per_capita(adhk, population)
+  # adhb_triwulanan_per_capita <- calculate_per_capita(adhb_triwulanan_total, population)
+  # adhb_tahunan_per_capita <- calculate_per_capita(adhb_tahunan_total, population)
+  # adhk_triwulanan_per_capita <- calculate_per_capita(adhk_triwulanan_total, population)
+  # adhk_tahunan_per_capita <- calculate_per_capita(adhk_tahunan_total, population)
+  
   # SERVER SIDEBAR =============================================================
   output$pdrb_general <- renderMenu({
     # req(data_uploaded())
@@ -108,7 +140,9 @@ server <- function(input, output, session) {
   })
   
   output$pdrb_perkapita <- renderMenu({
-    menuItem("PDRB Per Kapita", tabName = "pdrb_perkapita", icon = icon("people-group"))
+    menuItem("PDRB Per Kapita", icon = icon("people-group"),
+             menuSubItem("ADHB", tabName = "adhb_perkapita"),
+             menuSubItem("ADHK", tabName = "adhk_perkapita"))
   })
   
   output$download <- renderMenu({

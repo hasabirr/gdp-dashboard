@@ -5,6 +5,10 @@ observe({
   updateSelectInput(session, "flag_pdrb", choices = unique(adhb$flag))
 })
 
+output$tahun_pdrb_ui <- renderUI({
+  selectInput("tahun_pdrb", "Pilih Tahun:", choices = tahun_tersedia, selected = "2023")
+})
+
 output$kodeUI_pdrb <- renderUI({
   kode_choices <- adhb %>%
     filter(flag == input$flag_pdrb) %>%

@@ -1,22 +1,4 @@
 tabItem(tabName = "laju_implisit",
-        # fluidRow(
-        #         box(title = "Filter", status = "primary", solidHeader = TRUE, width = 4,
-        #             selectInput("flag_pdrb", "Pilih Flag:", choices = NULL),
-        #             checkboxInput("select_all_pdrb", "Pilih Semua Kode", value = FALSE), 
-        #             div(style = "max-height: 80px; overflow-y: auto;",
-        #                 uiOutput("kodeUI_pdrb")
-        #             ), 
-        #             selectInput("tahun_pdrb", "Pilih Tahun:", 
-        #                         choices = c("2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024"), selected = "2023"),
-        #             selectInput("triwulan_pdrb", "Pilih Triwulan:", 
-        #                         choices = c("Triwulan 1", "Triwulan 2", "Triwulan 3", "Triwulan 4"), selected = "Triwulan 1"),
-        #             textInput("search_code", "Cari Kode Lapangan Usaha:"), 
-        #             textOutput("nama_lapangan_usaha")
-        #         ),
-        #         box(title = "PDRB ADHB Menurut Kode, Tahun, dan Triwulan", status = "primary", solidHeader = TRUE, width = 8,
-        #             plotlyOutput("pdrb_plot")
-        #         )
-        # ),
         fluidRow(
                 box(title = "Filter", status = "primary", solidHeader = TRUE, width = 4,
                     selectInput("flag_laju", "Pilih Flag:", choices = NULL), # Input Flag
@@ -42,10 +24,26 @@ tabItem(tabName = "laju_implisit",
                     plotlyOutput("line_laju_simple")
                 )
         ),
+        # Input Baris Pertama
         fluidRow(
-                box(
-                        title = "PDRB SERI 2010 ATAS DASAR HARGA BERLAKU MENURUT LAPANGAN USAHA (JUTA RUPIAH)", status = "primary", solidHeader = TRUE, width = 12,
-                        DT::DTOutput("laju_table")
-                )
+          box(
+            title = "Pilih Jenis Data Untuk Ditampilkan", status = "primary", solidHeader = TRUE, width = 12,
+            div(
+              style = "display: flex; align-items: center; gap: 20px; flex-wrap: wrap;",
+              actionButton("data_grafik1_triwulanan", "Data Grafik 1 Triwulanan", class = "btn-primary"),
+              actionButton("data_grafik1_tahunan", "Data Grafik 1 Tahunan", class = "btn-primary"),
+              actionButton("data_grafik2_triwulanan", "Data Grafik 2 Triwulanan", class = "btn-primary"),
+              actionButton("data_grafik2_tahunan", "Data Grafik 2 Tahunan", class = "btn-primary")
+            )
+          )
+        ),
+        
+        # Tabel Baris Kedua
+        fluidRow(
+          box(
+            title = "Tabel Laju Implisit",
+            status = "primary", solidHeader = TRUE, width = 12,
+            DT::DTOutput("laju_table")
+          )
         )
 )
