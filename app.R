@@ -25,6 +25,7 @@ ui <- dashboardPage(
 # SERVER
 server <- function(input, output, session) {
 
+  # DATA ADHB ==================================================================
   adhb <- gsheet2tbl('docs.google.com/spreadsheets/d/1zX-sS-QRhgQw8N5I0OU-Su06NBRm66J1/edit?gid=326092188#gid=326092188') %>%
     mutate(kode = factor(kode)) %>%
     mutate(across(4:ncol(.), ~ round(., 4)))
@@ -55,6 +56,7 @@ server <- function(input, output, session) {
     summarise(nilai_adhb = sum(nilai_adhb, na.rm = TRUE), .groups = "drop") %>%
     mutate(periode = as.character(tahun)) %>% select(-tahun)
   
+  # DATA ADHK ==================================================================
   adhk <- gsheet2tbl('docs.google.com/spreadsheets/d/1FeTRkKfhJc4z29vP5ftXL2hNBolYTtQU/edit?gid=1723490359#gid=1723490359') %>%
     mutate(kode = factor(kode)) %>%
     mutate(across(4:ncol(.), ~ round(., 4)))
@@ -83,6 +85,7 @@ server <- function(input, output, session) {
     summarise(nilai_adhk = sum(nilai_adhk, na.rm = TRUE), .groups = "drop") %>%
     mutate(periode = as.character(tahun)) %>% select(-tahun)
   
+  # DATA PERKAPITA =============================================================
   population <- gsheet2tbl('docs.google.com/spreadsheets/d/1ACQnSbPG6oDPEc0o3oVF-gdyoImhSXzLe0rS3d_xxiQ/edit?gid=0#gid=0')
   
   calculate_per_capita <- function(adhb, population) {
@@ -119,6 +122,72 @@ server <- function(input, output, session) {
   # adhk_triwulanan_perkapita <- calculate_per_capita(adhk_triwulanan_total, population)
   # adhk_tahunan_perkapita <- calculate_per_capita(adhk_tahunan_total, population)
   
+  # DATA PERTUMBUHAN - Dari ADHK
+  qtq_data <- adhk %>%
+    tidyr::pivot_longer(
+      cols = matches("^\\d{4}_.+"),  # Pilih kolom dengan tahun (4 digit) dan underscore
+      names_to = "periode",
+      values_to = "nilai"
+    ) %>%
+    arrange(kode, periode) %>%
+    group_by(kode) %>%
+    mutate(
+      qtq = ((nilai / lag(nilai)) * 100) - 100  # Hitung qtq
+    ) %>%
+    ungroup()
+  
+  # Jika ingin kembali ke format wide
+  qtq_data_wide <- qtq_data %>%
+    select(flag, kode, nama, periode, qtq) %>%
+    tidyr::pivot_wider(names_from = periode, values_from = qtq)
+
+  yoy_data <- adhk %>%
+    tidyr::pivot_longer(
+      cols = matches("^\\d{4}_.+"),  # Pilih kolom dengan tahun dan kuartal
+      names_to = "periode",
+      values_to = "nilai"
+    ) %>%
+    mutate(
+      year = as.numeric(substr(periode, 1, 4)),        # Ekstrak tahun
+      quarter = as.numeric(substr(periode, 6, 6))     # Ekstrak triwulan
+    ) %>%
+    arrange(kode, year, quarter) %>%
+    group_by(kode, quarter) %>%
+    mutate(
+      yoy = (nilai / lag(nilai, 1)) * 100 - 100       # Hitung YoY (dibandingkan dengan tahun sebelumnya pada triwulan yang sama)
+    ) %>%
+    ungroup()
+  
+  # Jika ingin kembali ke format wide
+  yoy_data_wide <- yoy_data %>%
+    select(flag, kode, nama, periode, yoy) %>%
+    tidyr::pivot_wider(names_from = periode, values_from = yoy)
+  
+  ctc_data <- adhk %>%
+    tidyr::pivot_longer(
+      cols = matches("^\\d{4}_.+"),  # Pilih kolom dengan tahun dan kuartal
+      names_to = "periode",
+      values_to = "nilai"
+    ) %>%
+    mutate(
+      year = as.numeric(substr(periode, 1, 4)),  # Ekstrak tahun
+      quarter = as.numeric(substr(periode, 6, 6)),  # Ekstrak triwulan
+      flag_kode = paste(flag, kode, sep = "_")  # Gabungkan flag dan kode menjadi satu identifier
+    ) %>%
+    group_by(flag_kode, kode) %>%
+    arrange(kode, year, quarter) %>%
+    mutate(
+      # C-to-C: (nilai saat ini / nilai tahun sebelumnya) * 100 - 100
+      ctc = case_when(
+        year == 2017 ~ NA_real_,  # Tidak ada CTC untuk tahun 2017
+        quarter == 1 ~ (nilai / lag(nilai, 4)) * 100 - 100,  # C-to-C untuk triwulan 1
+        quarter == 2 ~ (nilai + lag(nilai)) / (lag(nilai, 5) + lag(nilai, 4)) * 100 - 100,  # CTC untuk triwulan 2
+        quarter == 3 ~ ((nilai + lag(nilai) + lag(nilai, 2)) / (lag(nilai, 6) + lag(nilai, 5) + lag(nilai, 4))) * 100 - 100,  # CTC untuk triwulan 3
+        quarter == 4 ~ ((nilai + lag(nilai) + lag(nilai, 2) + lag(nilai, 3)) / (lag(nilai, 7) + lag(nilai, 6) + lag(nilai, 5) + lag(nilai, 4))) * 100 - 100  # CTC untuk triwulan 4
+      )
+    ) %>%
+    ungroup()  # Menghapus pengelompokan
+  
   # SERVER SIDEBAR =============================================================
   output$pdrb_general <- renderMenu({
     # req(data_uploaded())
@@ -130,6 +199,7 @@ server <- function(input, output, session) {
   observe({
     updateTabItems(session, "sidebar_menu", selected = "adhb_general")
   })
+  
   output$pdrb_growth <- renderMenu({
     menuItem("Pertumbuhan", icon = icon("line-chart"),
              menuSubItem("Quarter to Quarter (Q-to-Q)", tabName = "qtq"),
@@ -164,6 +234,7 @@ server <- function(input, output, session) {
   source("server/adhk_general.R", local = TRUE)
   source("server/laju_implisit.R", local = TRUE)
   source("server/adhb_perkapita.R", local = TRUE)
+  source("server/adhk_perkapita.R", local = TRUE)
   source("server/download.R", local = TRUE)
   source("server/glosarium.R", local = TRUE)
   # lengkapi untuk source lainnya
