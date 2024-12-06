@@ -152,7 +152,7 @@ server <- function(input, output, session) {
   })
   
   output$download <- renderMenu({
-    menuItem("Download Data", tabName = "download", icon = icon("download"))
+    menuItem("Download Data", tabName = "download_data", icon = icon("download"))
   })
   
   output$glosarium <- renderMenu({
@@ -164,6 +164,7 @@ server <- function(input, output, session) {
   source("server/adhk_general.R", local = TRUE)
   source("server/laju_implisit.R", local = TRUE)
   source("server/adhb_perkapita.R", local = TRUE)
+  source("server/download.R", local = TRUE)
   source("server/glosarium.R", local = TRUE)
   # lengkapi untuk source lainnya
 }
