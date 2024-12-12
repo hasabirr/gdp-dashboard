@@ -14,7 +14,7 @@ tabItem(tabName = "adhb_general",
                     textInput("search_code", "Cari Kode Lapangan Usaha:"), 
                     textOutput("nama_lapangan_usaha")
                 ),
-                box(title = "PDRB ADHB Menurut Kode, Tahun, dan Triwulan", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "Grafik 1 - PDRB ADHB Menurut Kode, Tahun, dan Triwulan", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("pdrb_plot")
                 )
         ),
@@ -28,7 +28,7 @@ tabItem(tabName = "adhb_general",
                     uiOutput("periode_filter_ui"),
                     uiOutput("tahun_range_ui")
                 ),
-                box(title = "Total PDRB ADHB Menurut Periode dan Kode", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "Grafik 2 - Total PDRB ADHB Menurut Periode dan Kode", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("line_adhb")
                 )
         ),
@@ -37,13 +37,26 @@ tabItem(tabName = "adhb_general",
                     uiOutput("periode_filter_ui_simple"),
                     uiOutput("tahun_range_ui_simple")
                 ),
-                box(title = "Total PDRB ADHB Per Periode (Triwulan dan Tahunan)", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "Grafik 3 - Total PDRB ADHB Per Periode (Triwulan dan Tahunan)", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("line_adhb_simple")
                 )
         ),
         fluidRow(
+          box(
+            title = "Pilih Jenis Data Untuk Ditampilkan (Klik Lagi Untuk Menerapkan Filter)", status = "primary", solidHeader = TRUE, width = 12,
+            div(
+              style = "display: flex; align-items: center; gap: 20px; flex-wrap: wrap; color: white;",
+              actionButton("data_adhb_grafik1", "Data Grafik 1", class = "btn-primary"),
+              actionButton("data_adhb_grafik2_triwulanan", "Data Grafik 2 Triwulanan", class = "btn-primary"),
+              actionButton("data_adhb_grafik2_tahunan", "Data Grafik 2 Tahunan", class = "btn-primary"),
+              actionButton("data_adhb_grafik3_triwulanan", "Data Grafik 3 Triwulanan", class = "btn-primary"),
+              actionButton("data_adhb_grafik3_tahunan", "Data Grafik 3 Tahunan", class = "btn-primary")
+            )
+          )
+        ),
+        fluidRow(
                 box(
-                        title = "PDRB SERI 2010 ATAS DASAR HARGA BERLAKU MENURUT LAPANGAN USAHA (JUTA RUPIAH)", status = "primary", solidHeader = TRUE, width = 12,
+                        title = uiOutput("dynamic_box_title_adhb"), status = "primary", solidHeader = TRUE, width = 12,
                         DT::DTOutput("adhb_table")
                 )
         )

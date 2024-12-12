@@ -276,13 +276,13 @@ output$laju_table <- renderDT({
 # Dynamic title for the box
 output$dynamic_box_title <- renderText({
   if (input$data_grafik1_triwulanan > 0) {
-    "Data Grafik 1 Triwulanan"
+    "Tabel Data Grafik 1 Triwulanan"
   } else if (input$data_grafik1_tahunan > 0) {
-    "Data Grafik 1 Tahunan"
+    "Tabel Data Grafik 1 Tahunan"
   } else if (input$data_grafik2_triwulanan > 0) {
-    "Data Grafik 2 Triwulanan"
+    "Tabel Data Grafik 2 Triwulanan"
   } else if (input$data_grafik2_tahunan > 0) {
-    "Data Grafik 2 Tahunan"
+    "Tabel Data Grafik 2 Tahunan"
   } else {
     "Pilih Data Grafik"
   }

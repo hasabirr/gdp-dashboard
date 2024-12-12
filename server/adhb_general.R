@@ -275,10 +275,77 @@ output$line_adhb_simple <- renderPlotly({
     )
 })
 
+# Reactive value to store the selected dataset
+selected_data_adhb <- reactiveVal()
+
+observeEvent(input$data_adhb_grafik1, {
+  data_table_1_adhb <- adhb %>%
+    filter(flag == input$flag_line,
+           kode %in% input$kode_line)
+  selected_data_adhb(data_table_1_adhb)
+})
+
+observeEvent(input$data_adhb_grafik2_triwulanan, {
+  kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
+  
+  tahun_range <- as.integer(input$tahun_range)
+  kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
+                                  as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
+  
+  data_table_2_adhb_triwulanan <- adhb %>%
+    filter(flag == input$flag_line,
+           kode %in% input$kode_line) %>%
+    select(flag, kode, nama, all_of(kolom_terpilih))
+  
+  selected_data_adhb(data_table_2_adhb_triwulanan)
+})
+
+observeEvent(input$data_adhb_grafik2_tahunan, {
+  
+  data_table_2_adhb_tahunan <- adhb %>%
+    filter(flag == input$flag_line,
+           kode %in% input$kode_line)
+  
+  selected_data_adhb(data_table_2_adhb_tahunan)
+})
+
+observeEvent(input$data_adhb_grafik3_triwulanan, {
+  data_table_3_triwulanan <- adhb %>%
+    filter(flag == 1) %>% 
+    tidyr::pivot_longer(
+      cols = -c(flag, kode, nama),
+      names_to = "periode",
+      values_to = "nilai"
+    ) %>%
+    mutate(periode = gsub("_", ".", periode)) %>%
+    group_by(periode) %>%
+    summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop")
+    
+  selected_data_adhb(data_table_3_triwulanan)
+})
+
+observeEvent(input$data_adhb_grafik3_tahunan, {
+  
+  data_table_3_tahunan <- adhb %>%
+    filter(flag == 1) %>% 
+    tidyr::pivot_longer(
+      cols = -c(flag, kode, nama),
+      names_to = "periode",
+      values_to = "nilai"
+    ) %>%
+    mutate(tahun = gsub("_", ".", periode)) %>%
+    mutate(tahun = as.integer(substr(periode, 1, 4))) %>%
+    group_by(tahun) %>%
+    summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop") %>%
+    mutate(periode = as.character(tahun))
+  
+  selected_data_adhb(data_table_3_tahunan)
+})
+
 # Tabel
 output$adhb_table <- renderDT({
-  data_to_show <- adhb
-  datatable(data_to_show, 
+
+  datatable(selected_data_adhb(), 
             options = list(
               pageLength = 10,         
               lengthMenu = c(10, 20, 50), 
@@ -288,4 +355,20 @@ output$adhb_table <- renderDT({
                                 list(width = '100%', targets = "_all"))
             ),
             rownames = FALSE) 
+})
+
+output$dynamic_box_title_adhb <- renderText({
+  if (input$data_adhb_grafik1 > 0) {
+    "Data Grafik 1"
+  } else if (input$data_adhb_grafik2_triwulanan > 0) {
+    "Data Grafik 2 Triwulanan"
+  } else if (input$data_adhb_grafik2_tahunan > 0) {
+    "Data Grafik 2 Tahunan"
+  } else if (input$data_adhb_grafik3_triwulanan > 0) {
+    "Data Grafik 3 Triwulanan"
+  } else if (input$data_adhb_grafik3_tahunan > 0) {
+    "Data Grafik 3 Tahunan"
+  } else {
+    "Pilih Data Grafik"
+  }
 })

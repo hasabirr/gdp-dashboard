@@ -27,7 +27,7 @@ tabItem(tabName = "laju_implisit",
         # Input Baris Pertama
         fluidRow(
           box(
-            title = "Pilih Jenis Data Untuk Ditampilkan", status = "primary", solidHeader = TRUE, width = 12,
+            title = "Pilih Jenis Data Untuk Ditampilkan (Klik Lagi Untuk Menerapkan Filter)", status = "primary", solidHeader = TRUE, width = 12,
             div(
               style = "display: flex; align-items: center; gap: 20px; flex-wrap: wrap; color: white;",
               actionButton("data_grafik1_triwulanan", "Data Grafik 1 Triwulanan", class = "btn-primary"),
@@ -41,7 +41,7 @@ tabItem(tabName = "laju_implisit",
         # Tabel Baris Kedua
         fluidRow(
           box(
-            title = "Tabel Laju Implisit",
+            title = uiOutput("dynamic_box_title"),
             status = "primary", solidHeader = TRUE, width = 12,
             DT::DTOutput("laju_table")
           )
