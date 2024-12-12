@@ -9,6 +9,11 @@ dashboardBody(
     source("ui/tabs/laju_implisit.R")$value,
     source("ui/tabs/adhb_perkapita.R")$value,
     source("ui/tabs/adhk_perkapita.R")$value,
+    tabItem(tabName = "share_pdrb",
+            h2("Sedang Dalam Pengembangan")),
+    source("ui/tabs/qtq.R")$value,
+    source("ui/tabs/yoy.R")$value,
+    source("ui/tabs/ctc.R")$value,
     source("ui/tabs/download_data.R")$value,
     source("ui/tabs/glosarium.R")$value
     # source("ui/tabs/upload_data.R")$value

@@ -11,7 +11,7 @@ tabItem(tabName = "laju_implisit",
                     textInput("search_code_laju", "Cari Kode Lapangan Usaha:"), 
                     textOutput("nama_lapangan_usaha_laju")
                 ),
-                box(title = "Total PDRB ADHB Menurut Periode dan Kode", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "Grafik 1 Laju Implisit", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("line_laju")
                 )
         ),
@@ -20,7 +20,7 @@ tabItem(tabName = "laju_implisit",
                     uiOutput("periode_laju_simple"),
                     uiOutput("tahun_laju_simple")
                 ),
-                box(title = "Total PDRB ADHB Per Periode (Triwulan dan Tahunan)", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "Grafik 2 Laju Implisit", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("line_laju_simple")
                 )
         ),
@@ -29,7 +29,7 @@ tabItem(tabName = "laju_implisit",
           box(
             title = "Pilih Jenis Data Untuk Ditampilkan", status = "primary", solidHeader = TRUE, width = 12,
             div(
-              style = "display: flex; align-items: center; gap: 20px; flex-wrap: wrap;",
+              style = "display: flex; align-items: center; gap: 20px; flex-wrap: wrap; color: white;",
               actionButton("data_grafik1_triwulanan", "Data Grafik 1 Triwulanan", class = "btn-primary"),
               actionButton("data_grafik1_tahunan", "Data Grafik 1 Tahunan", class = "btn-primary"),
               actionButton("data_grafik2_triwulanan", "Data Grafik 2 Triwulanan", class = "btn-primary"),

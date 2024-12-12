@@ -26,7 +26,8 @@ ui <- dashboardPage(
 server <- function(input, output, session) {
 
   # DATA ADHB ==================================================================
-  adhb <- gsheet2tbl('docs.google.com/spreadsheets/d/1zX-sS-QRhgQw8N5I0OU-Su06NBRm66J1/edit?gid=326092188#gid=326092188') %>%
+  # adhb <- gsheet2tbl('docs.google.com/spreadsheets/d/1zX-sS-QRhgQw8N5I0OU-Su06NBRm66J1/edit?gid=326092188#gid=326092188') %>%
+  adhb <- read_xlsx("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/data/data_pdrb_adhb.xlsx") %>%
     mutate(kode = factor(kode)) %>%
     mutate(across(4:ncol(.), ~ round(., 4)))
   
@@ -57,7 +58,8 @@ server <- function(input, output, session) {
     mutate(periode = as.character(tahun)) %>% select(-tahun)
   
   # DATA ADHK ==================================================================
-  adhk <- gsheet2tbl('docs.google.com/spreadsheets/d/1FeTRkKfhJc4z29vP5ftXL2hNBolYTtQU/edit?gid=1723490359#gid=1723490359') %>%
+  # adhk <- gsheet2tbl('docs.google.com/spreadsheets/d/1FeTRkKfhJc4z29vP5ftXL2hNBolYTtQU/edit?gid=1723490359#gid=1723490359') %>%
+  adhk <- read_xlsx("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/data/data_pdrb_adhk.xlsx") %>%
     mutate(kode = factor(kode)) %>%
     mutate(across(4:ncol(.), ~ round(., 4)))
   
@@ -86,8 +88,8 @@ server <- function(input, output, session) {
     mutate(periode = as.character(tahun)) %>% select(-tahun)
   
   # DATA PERKAPITA =============================================================
-  population <- gsheet2tbl('docs.google.com/spreadsheets/d/1ACQnSbPG6oDPEc0o3oVF-gdyoImhSXzLe0rS3d_xxiQ/edit?gid=0#gid=0')
-  
+  # population <- gsheet2tbl('docs.google.com/spreadsheets/d/1ACQnSbPG6oDPEc0o3oVF-gdyoImhSXzLe0rS3d_xxiQ/edit?gid=0#gid=0')
+  population <- read_xlsx("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/data/population.xlsx")
   calculate_per_capita <- function(adhb, population) {
     # Menentukan kolom-kolom yang mengandung data tahun secara dinamis
     tahun_columns <- grep("^\\d{4}", names(adhb), value = TRUE)
@@ -125,7 +127,7 @@ server <- function(input, output, session) {
   # DATA PERTUMBUHAN - Dari ADHK
   qtq_data <- adhk %>%
     tidyr::pivot_longer(
-      cols = matches("^\\d{4}_.+"),  # Pilih kolom dengan tahun (4 digit) dan underscore
+      cols = matches("^\\d{4}_.+"), 
       names_to = "periode",
       values_to = "nilai"
     ) %>%
@@ -170,9 +172,9 @@ server <- function(input, output, session) {
       values_to = "nilai"
     ) %>%
     mutate(
-      year = as.numeric(substr(periode, 1, 4)),  # Ekstrak tahun
-      quarter = as.numeric(substr(periode, 6, 6)),  # Ekstrak triwulan
-      flag_kode = paste(flag, kode, sep = "_")  # Gabungkan flag dan kode menjadi satu identifier
+      year = as.numeric(substr(periode, 1, 4)),
+      quarter = as.numeric(substr(periode, 6, 6)), 
+      flag_kode = paste(flag, kode, sep = "_")
     ) %>%
     group_by(flag_kode, kode) %>%
     arrange(kode, year, quarter) %>%
@@ -186,14 +188,14 @@ server <- function(input, output, session) {
         quarter == 4 ~ ((nilai + lag(nilai) + lag(nilai, 2) + lag(nilai, 3)) / (lag(nilai, 7) + lag(nilai, 6) + lag(nilai, 5) + lag(nilai, 4))) * 100 - 100  # CTC untuk triwulan 4
       )
     ) %>%
-    ungroup()  # Menghapus pengelompokan
+    ungroup()
   
   # SERVER SIDEBAR =============================================================
   output$pdrb_general <- renderMenu({
     # req(data_uploaded())
     menuItem("General", icon = icon("chart-simple"), startExpanded = TRUE,
-             menuSubItem("PDRB ADHB", tabName = "adhb_general"),
-             menuSubItem("PDRB ADHK", tabName = "adhk_general"))
+             menuSubItem("ADHB", tabName = "adhb_general"),
+             menuSubItem("ADHK", tabName = "adhk_general"))
   })
   
   observe({
@@ -201,7 +203,7 @@ server <- function(input, output, session) {
   })
   
   output$pdrb_growth <- renderMenu({
-    menuItem("Pertumbuhan", icon = icon("line-chart"),
+    menuItem("Pertumbuhan Ekonomi", icon = icon("line-chart"),
              menuSubItem("Quarter to Quarter (Q-to-Q)", tabName = "qtq"),
              menuSubItem("Year on Year (Y-o-Y)", tabName = "yoy"),
              menuSubItem("Cumulative (C-to-C)", tabName = "ctc"))
@@ -212,7 +214,7 @@ server <- function(input, output, session) {
   })
   
   output$share <- renderMenu({
-    menuItem("Share PDRB", tabName = "share", icon = icon("cubes-stacked"))
+    menuItem("Share PDRB", tabName = "share_pdrb", icon = icon("cubes-stacked"))
   })
   
   output$pdrb_perkapita <- renderMenu({
@@ -235,6 +237,9 @@ server <- function(input, output, session) {
   source("server/laju_implisit.R", local = TRUE)
   source("server/adhb_perkapita.R", local = TRUE)
   source("server/adhk_perkapita.R", local = TRUE)
+  source("server/qtq.R", local = TRUE)
+  source("server/yoy.R", local = TRUE)
+  source("server/ctc.R", local = TRUE)
   source("server/download.R", local = TRUE)
   source("server/glosarium.R", local = TRUE)
   # lengkapi untuk source lainnya

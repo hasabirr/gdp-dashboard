@@ -152,7 +152,7 @@ output$line_laju <- renderPlotly({
     )
   ) %>%
     layout(
-      title = paste("Laju Indeks Implisit - Periode:", input$periode_laju),
+      title = paste("Laju Indeks Implisit - Periode", input$periode_laju),
       xaxis = list(title = ifelse(input$periode_laju == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
       yaxis = list(title = "Laju Indeks Implisit")
     )
@@ -213,22 +213,38 @@ output$line_laju_simple <- renderPlotly({
     )
   ) %>%
     layout(
-      title = paste("Total PDRB ADHB - Periode:", input$periode_laju_simple),
+      title = paste("Total Laju Indeks Implisit - Periode", input$periode_laju_simple),
       xaxis = list(title = ifelse(input$periode_laju_simple == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
       yaxis = list(title = "Nilai PDRB")
     )
 })
 
 # Reactive value to store the selected dataset
-selected_data <- reactiveVal(implisit)
+selected_data <- reactiveVal()
 
 # Observe button clicks to update the dataset
 observeEvent(input$data_grafik1_triwulanan, {
-  selected_data(implisit)
+  kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
+  
+  tahun_range <- as.integer(input$tahun_laju)
+  kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
+                                  as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
+  
+  data_table_1 <- implisit %>%
+    filter(flag == input$flag_laju,
+           kode %in% input$kode_laju) %>%
+    filter(periode %in% all_of(kolom_terpilih))
+  
+  selected_data(data_table_1)
 })
 
 observeEvent(input$data_grafik1_tahunan, {
-  selected_data(implisit_2)
+  
+  data_table_2 <- implisit_2 %>%
+    filter(flag == input$flag_laju,
+           kode %in% input$kode_laju)
+  
+  selected_data(data_table_2)
 })
 
 observeEvent(input$data_grafik2_triwulanan, {
