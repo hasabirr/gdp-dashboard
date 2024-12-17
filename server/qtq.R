@@ -90,7 +90,8 @@ output$qtq_table <- renderDT({
       flag == input$flag_qtq,
       kode %in% input$kode_qtq
     ) %>%
-    filter(periode %in% all_of(kolom_terpilih))
+    filter(periode %in% all_of(kolom_terpilih)) %>%
+    select(nama, flag, kode, periode, nilai, qtq)
   
   datatable(data_to_show, 
             options = list(

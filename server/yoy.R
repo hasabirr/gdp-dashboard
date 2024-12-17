@@ -90,7 +90,8 @@ output$yoy_table <- renderDT({
       flag == input$flag_yoy,
       kode %in% input$kode_yoy
     ) %>%
-    filter(periode %in% all_of(kolom_terpilih))
+    filter(periode %in% all_of(kolom_terpilih)) %>%
+    select(nama, flag, kode, periode, nilai, yoy)
   
   datatable(data_to_show, 
             options = list(

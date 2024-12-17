@@ -90,7 +90,8 @@ output$ctc_table <- renderDT({
       flag == input$flag_ctc,
       kode %in% input$kode_ctc
     ) %>%
-    filter(periode %in% all_of(kolom_terpilih))
+    filter(periode %in% all_of(kolom_terpilih)) %>%
+    select(nama, flag, kode, periode, nilai, ctc)
   
   datatable(data_to_show, 
             options = list(

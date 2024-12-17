@@ -45,7 +45,7 @@ tabItem(tabName = "adhb_general",
           box(
             title = "Pilih Jenis Data Untuk Ditampilkan (Klik Lagi Untuk Menerapkan Filter)", status = "primary", solidHeader = TRUE, width = 12,
             div(
-              style = "display: flex; align-items: center; gap: 20px; flex-wrap: wrap; color: white;",
+              style = "display: flex; align-items: center; gap: 30px; flex-wrap: wrap; color: white;",
               actionButton("data_adhb_grafik1", "Data Grafik 1", class = "btn-primary"),
               actionButton("data_adhb_grafik2_triwulanan", "Data Grafik 2 Triwulanan", class = "btn-primary"),
               actionButton("data_adhb_grafik2_tahunan", "Data Grafik 2 Tahunan", class = "btn-primary"),
