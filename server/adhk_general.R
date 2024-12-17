@@ -89,7 +89,7 @@ observe({
 output$kodeUI_line_adhk <- renderUI({
   req(input$flag_line_adhk)
   
-  kode_choices <- adhb %>%
+  kode_choices <- adhk %>%
     filter(flag == input$flag_line_adhk) %>%
     pull(kode)
   
@@ -275,10 +275,85 @@ output$line_adhk_simple <- renderPlotly({
     )
 })
 
+# Reactive value to store the selected dataset
+selected_data_adhk <- reactiveVal()
+
+observeEvent(input$data_adhk_grafik1, {
+  data_table_1_adhk <- adhk %>%
+    filter(flag == input$flag_line,
+           kode %in% input$kode_line)
+  selected_data_adhk(data_table_1_adhk)
+})
+
+observeEvent(input$data_adhk_grafik2_triwulanan, {
+  kolom_tahun <- grep("^\\d{4}_", names(adhk), value = TRUE)
+  
+  tahun_range <- as.integer(input$tahun_range)
+  kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
+                                  as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
+  
+  data_table_2_adhk_triwulanan <- adhk %>%
+    filter(flag == input$flag_line,
+           kode %in% input$kode_line) %>%
+    select(flag, kode, nama, all_of(kolom_terpilih))
+  
+  selected_data_adhk(data_table_2_adhk_triwulanan)
+})
+
+observeEvent(input$data_adhk_grafik2_tahunan, {
+  
+  nama_data <- adhk %>% select(kode, nama)
+  
+  data_table_2_adhk_tahunan <- adhk %>%
+    filter(flag == input$flag_line,
+           kode %in% input$kode_line) %>%
+    tidyr::pivot_longer(cols = matches("^\\d{4}(_.*)?$"), 
+                        names_to = "periode",
+                        values_to = "nilai") %>%
+    mutate(periode = as.integer(gsub("_.*", "", periode))) %>%
+    group_by(periode, kode) %>%
+    summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop") %>%
+    left_join(nama_data, by = "kode") %>%
+    select(nama, kode, periode, nilai) %>%
+    arrange(kode)
+  
+  selected_data_adhk(data_table_2_adhk_tahunan)
+})
+
+observeEvent(input$data_adhk_grafik3_triwulanan, {
+  data_table_3_triwulanan <- adhk %>%
+    filter(flag == 1) %>% 
+    tidyr::pivot_longer(
+      cols = -c(flag, kode, nama),
+      names_to = "periode",
+      values_to = "nilai"
+    ) %>%
+    select(nama, flag, kode, periode, nilai)
+  
+  selected_data_adhk(data_table_3_triwulanan)
+})
+
+observeEvent(input$data_adhk_grafik3_tahunan, {
+  
+  data_table_3_tahunan <- adhk %>%
+    filter(flag == 1) %>% 
+    tidyr::pivot_longer(
+      cols = -c(flag, kode, nama),
+      names_to = "periode",
+      values_to = "nilai"
+    ) %>%
+    mutate(tahun = gsub("_", ".", periode)) %>%
+    mutate(tahun = as.integer(substr(periode, 1, 4))) %>%
+    group_by(tahun) %>%
+    summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop") %>%
+    mutate(periode = as.character(tahun))
+  
+  selected_data_adhk(data_table_3_tahunan)
+})
+
 # Tabel
 output$adhk_table <- renderDT({
-  data_to_show <- adhk
-  datatable(data_to_show, 
+  datatable(selected_data_adhk(), 
             options = list(
               pageLength = 10,         
               lengthMenu = c(10, 20, 50), 

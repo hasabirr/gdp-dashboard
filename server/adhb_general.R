@@ -329,10 +329,6 @@ observeEvent(input$data_adhb_grafik3_triwulanan, {
       values_to = "nilai"
     ) %>%
     select(nama, flag, kode, periode, nilai)
-  # %>%
-  #   mutate(periode = gsub("_", ".", periode)) %>%
-  #   group_by(periode) %>%
-  #   summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop")
     
   selected_data_adhb(data_table_3_triwulanan)
 })

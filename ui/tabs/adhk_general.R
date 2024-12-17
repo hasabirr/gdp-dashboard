@@ -14,7 +14,7 @@ tabItem(tabName = "adhk_general",
                     textInput("search_code_adhk", "Cari Kode Lapangan Usaha:"), 
                     textOutput("nama_lapangan_usaha_adhk")
                 ),
-                box(title = "PDRB ADHK Menurut Kode, Tahun, dan Triwulan", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "Grafik 1 - PDRB ADHK Menurut Kode, Tahun, dan Triwulan", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("adhk_plot")
                 )
         ),
@@ -28,7 +28,7 @@ tabItem(tabName = "adhk_general",
                     uiOutput("periode_filter_ui_adhk"),
                     uiOutput("tahun_range_ui_adhk")
                 ),
-                box(title = "Total PDRB ADHK Menurut Periode dan Kode", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "Grafik 2 - Total PDRB ADHK Menurut Periode dan Kode", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("line_adhk")
                 )
         ),
@@ -37,13 +37,25 @@ tabItem(tabName = "adhk_general",
                     uiOutput("periode_filter_ui_simple_adhk"),
                     uiOutput("tahun_range_ui_simple_adhk")
                 ),
-                box(title = "Total PDRB ADHK Per Periode (Triwulan dan Tahunan)", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "Grafik 3 - Total PDRB ADHK Per Periode (Triwulan dan Tahunan)", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("line_adhk_simple")
-                )
+                ),
         ),
         fluidRow(
                 box(
-                        title = "PDRB SERI 2010 ATAS DASAR HARGA BERLAKU MENURUT LAPANGAN USAHA (JUTA RUPIAH)", status = "primary", solidHeader = TRUE, width = 12,
+                        title = "Pilih Jenis Data Untuk Ditampilkan (Klik Lagi Untuk Menerapkan Filter)", status = "primary", solidHeader = TRUE, width = 12,
+                        div(
+                                style = "display: flex; align-items: center; gap: 40px; flex-wrap: wrap; color: white;",
+                                actionButton("data_adhk_grafik1", "Data Grafik 1", class = "btn-primary"),
+                                actionButton("data_adhk_grafik2_triwulanan", "Data Grafik 2 Triwulanan", class = "btn-primary"),
+                                actionButton("data_adhk_grafik2_tahunan", "Data Grafik 2 Tahunan", class = "btn-primary"),
+                                actionButton("data_adhk_grafik3_triwulanan", "Data Grafik 3 Triwulanan", class = "btn-primary"),
+                                actionButton("data_adhk_grafik3_tahunan", "Data Grafik 3 Tahunan", class = "btn-primary")
+                        )
+                ),
+                box(
+                        # title = uiOutput("dynamic_box_title_adhk"), 
+                        status = "primary", solidHeader = TRUE, width = 12,
                         DT::DTOutput("adhk_table")
                 )
         )
