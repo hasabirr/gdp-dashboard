@@ -52,12 +52,18 @@ tabItem(tabName = "adhb_general",
               actionButton("data_adhb_grafik3_triwulanan", "Data Grafik 3 Triwulanan", class = "btn-primary"),
               actionButton("data_adhb_grafik3_tahunan", "Data Grafik 3 Tahunan", class = "btn-primary")
             )
+          ),
+          box(
+            # title = uiOutput("dynamic_box_title_adhb"), 
+            status = "primary", solidHeader = TRUE, width = 12,
+            DT::DTOutput("adhb_table")
           )
         ),
-        fluidRow(
-                box(
-                        title = uiOutput("dynamic_box_title_adhb"), status = "primary", solidHeader = TRUE, width = 12,
-                        DT::DTOutput("adhb_table")
-                )
-        )
+        # fluidRow(
+        #         box(
+        #                 # title = uiOutput("dynamic_box_title_adhb"), 
+        #                 status = "primary", solidHeader = TRUE, width = 12,
+        #                 DT::DTOutput("adhb_table")
+        #         )
+        # )
 )

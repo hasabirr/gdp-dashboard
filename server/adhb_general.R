@@ -370,18 +370,18 @@ output$adhb_table <- renderDT({
             rownames = FALSE) 
 })
 
-output$dynamic_box_title_adhb <- renderText({
-  if (input$data_adhb_grafik1 > 0) {
-    "Data Grafik 1"
-  } else if (input$data_adhb_grafik2_triwulanan > 0) {
-    "Data Grafik 2 Triwulanan"
-  } else if (input$data_adhb_grafik2_tahunan > 0) {
-    "Data Grafik 2 Tahunan"
-  } else if (input$data_adhb_grafik3_triwulanan > 0) {
-    "Data Grafik 3 Triwulanan"
-  } else if (input$data_adhb_grafik3_tahunan > 0) {
-    "Data Grafik 3 Tahunan"
-  } else {
-    "Pilih Data Grafik"
-  }
-})
+# output$dynamic_box_title_adhb <- renderText({
+#   if (observeEvent(input$data_adhb_grafik1)) {
+#     "Data Grafik 1"
+#   } else if (observeEvent(input$data_adhb_grafik2_triwulanan)) {
+#     "Data Grafik 2 Triwulanan"
+#   } else if (input$data_adhb_grafik2_tahunan > 0) {
+#     "Data Grafik 2 Tahunan"
+#   } else if (input$data_adhb_grafik3_triwulanan > 0) {
+#     "Data Grafik 3 Triwulanan"
+#   } else if (input$data_adhb_grafik3_tahunan > 0) {
+#     "Data Grafik 3 Tahunan"
+#   } else {
+#     "Pilih Data Grafik"
+#   }
+# })
