@@ -302,9 +302,20 @@ observeEvent(input$data_adhb_grafik2_triwulanan, {
 
 observeEvent(input$data_adhb_grafik2_tahunan, {
   
+  nama_data <- adhb %>% select(kode, nama)
+  
   data_table_2_adhb_tahunan <- adhb %>%
     filter(flag == input$flag_line,
-           kode %in% input$kode_line)
+           kode %in% input$kode_line) %>%
+    tidyr::pivot_longer(cols = matches("^\\d{4}(_.*)?$"), 
+                        names_to = "periode",
+                        values_to = "nilai") %>%
+    mutate(periode = as.integer(gsub("_.*", "", periode))) %>%
+    group_by(periode, kode) %>%
+    summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop") %>%
+    left_join(nama_data, by = "kode") %>%
+    select(nama, kode, periode, nilai) %>%
+    arrange(kode)
   
   selected_data_adhb(data_table_2_adhb_tahunan)
 })
@@ -317,9 +328,11 @@ observeEvent(input$data_adhb_grafik3_triwulanan, {
       names_to = "periode",
       values_to = "nilai"
     ) %>%
-    mutate(periode = gsub("_", ".", periode)) %>%
-    group_by(periode) %>%
-    summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop")
+    select(nama, flag, kode, periode, nilai)
+  # %>%
+  #   mutate(periode = gsub("_", ".", periode)) %>%
+  #   group_by(periode) %>%
+  #   summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop")
     
   selected_data_adhb(data_table_3_triwulanan)
 })
