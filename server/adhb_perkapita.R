@@ -279,7 +279,25 @@ output$line_adhb_perkapita_simple <- renderPlotly({
 
 # Tabel
 output$adhb_perkapita_table <- renderDT({
-  data_to_show <- adhb_perkapita
+  # kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
+  # 
+  # tahun_range <- as.integer(input$tahun_adhb_p_line_simple)
+  # kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
+  #                                 as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
+  # 
+  data_to_show <- adhb_perkapita 
+  # %>%
+  #   filter(flag == 1) %>%
+  #   select(c(kode, nama, all_of(kolom_terpilih))) %>%
+  #   tidyr::pivot_longer(
+  #     cols = -c(kode, nama),
+  #     names_to = "periode",
+  #     values_to = "nilai"
+  #   ) %>%
+  #   #   mutate(periode = gsub("_", ".", periode)) %>%
+  #   group_by(periode) %>%
+  #   summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop")
+  
   datatable(data_to_show, 
             options = list(
               pageLength = 10,         
