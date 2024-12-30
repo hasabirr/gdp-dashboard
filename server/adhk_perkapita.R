@@ -76,7 +76,7 @@ output$adhk_perkapita_plot <- renderPlotly({
     customdata = ~custom_hover
   ) %>%
     layout(
-      title = paste("PDRB adhk Tahun", input$tahun_adhk_perkapita, input$triwulan_adhk_perkapita),
+      title = paste("PDRB ADHK Perkapita Tahun", input$tahun_adhk_perkapita, input$triwulan_adhk_perkapita),
       xaxis = list(title = "Kode"),
       yaxis = list(title = "Nilai PDRB"),
       bargap = 0.2
@@ -193,7 +193,7 @@ output$line_adhk_perkapita <- renderPlotly({
     )
   ) %>%
     layout(
-      title = paste("Total PDRB adhk - Periode:", input$periode_adhk_p_line),
+      title = paste("Total PDRB ADHK Perkapita - Periode:", input$periode_adhk_p_line),
       xaxis = list(title = ifelse(input$periode_adhk_p_line == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
       yaxis = list(title = "Nilai PDRB")
     )
@@ -273,7 +273,7 @@ output$line_adhk_perkapita_simple <- renderPlotly({
     )
   ) %>%
     layout(
-      title = paste("Total PDRB adhk - Periode:", input$periode_adhk_p_line_simple),
+      title = paste("Total PDRB ADHK Perkapita - Periode:", input$periode_adhk_p_line_simple),
       xaxis = list(title = ifelse(input$periode_adhk_p_line_simple == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
       yaxis = list(title = "Nilai PDRB")
     )

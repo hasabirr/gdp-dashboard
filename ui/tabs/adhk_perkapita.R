@@ -14,7 +14,7 @@ tabItem(tabName = "adhk_perkapita",
                     textInput("search_code_adhk_perkapita", "Cari Kode Lapangan Usaha:"), 
                     textOutput("nama_lapangan_usaha_adhk_perkapita")
                 ),
-                box(title = "PDRB adhk Menurut Kode, Tahun, dan Triwulan", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "PDRB ADHK Perkapita Menurut Kode, Tahun, dan Triwulan", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("adhk_perkapita_plot")
                 )
         ),
@@ -28,7 +28,7 @@ tabItem(tabName = "adhk_perkapita",
                     uiOutput("periode_adhk_perkapita_line"),
                     uiOutput("tahun_adhk_perkapita_line")
                 ),
-                box(title = "Total PDRB adhk Menurut Periode dan Kode", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "Total PDRB ADHK Perkapita Menurut Periode dan Kode", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("line_adhk_perkapita")
                 )
         ),
@@ -37,13 +37,13 @@ tabItem(tabName = "adhk_perkapita",
                     uiOutput("periode_adhk_perkapita_line_simple"),
                     uiOutput("tahun_adhk_perkapita_line_simple")
                 ),
-                box(title = "Total PDRB adhk Per Periode (Triwulan dan Tahunan)", status = "primary", solidHeader = TRUE, width = 8,
+                box(title = "Total PDRB ADHK Perkapita Per Periode (Triwulan dan Tahunan)", status = "primary", solidHeader = TRUE, width = 8,
                     plotlyOutput("line_adhk_perkapita_simple")
                 )
         ),
         fluidRow(
                 box(
-                        title = "PDRB SERI 2010 ATAS DASAR HARGA BERLAKU MENURUT LAPANGAN USAHA (JUTA RUPIAH)", status = "primary", solidHeader = TRUE, width = 12,
+                        title = "Tabel PDRB ADHK Perkapita", status = "primary", solidHeader = TRUE, width = 12,
                         DT::DTOutput("adhk_perkapita_table")
                 )
         )

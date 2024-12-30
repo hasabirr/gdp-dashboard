@@ -73,7 +73,7 @@ output$adhb_perkapita_plot <- renderPlotly({
     customdata = ~custom_hover
   ) %>%
     layout(
-      title = paste("PDRB ADHB Tahun", input$tahun_adhb_perkapita, input$triwulan_adhb_perkapita),
+      title = paste("PDRB ADHB Perkapita Tahun", input$tahun_adhb_perkapita, input$triwulan_adhb_perkapita),
       xaxis = list(title = "Kode"),
       yaxis = list(title = "Nilai PDRB"),
       bargap = 0.2
@@ -127,19 +127,19 @@ output$line_adhb_perkapita <- renderPlotly({
   # req(input$kode_adhb_perkapita_line)
   # req(input$periode_adhb_perkapita_line)
   # req(input$tahun_adhb_perkapita_line)
-  print("sini")
+
   kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
   tahun_range <- as.integer(input$tahun_adhb_p_line)
   kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
                                   as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
-  print("sampe sini")
+
   filtered_data <- adhb_perkapita %>%
     filter(flag == input$flag_adhb_perkapita_line,
            kode %in% input$kode_adhb_perkapita_line) %>%
     select(kode, nama, all_of(kolom_terpilih))
 
   nama_data <- filtered_data %>% select(kode, nama)
-  print("sampe sinii")
+
   if(input$periode_adhb_p_line == "Triwulanan") {
     nama_data <- filtered_data %>% select(kode, nama)
     triwulan_data <- filtered_data %>%
@@ -193,7 +193,7 @@ output$line_adhb_perkapita <- renderPlotly({
     )
   ) %>%
     layout(
-      title = paste("Total PDRB ADHB - Periode:", input$periode_adhb_p_line),
+      title = paste("Total PDRB ADHB Perkapita - Periode:", input$periode_adhb_p_line),
       xaxis = list(title = ifelse(input$periode_adhb_p_line == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
       yaxis = list(title = "Nilai PDRB")
     )
@@ -271,7 +271,7 @@ output$line_adhb_perkapita_simple <- renderPlotly({
     )
   ) %>%
     layout(
-      title = paste("Total PDRB ADHB - Periode:", input$periode_adhb_p_line_simple),
+      title = paste("Total PDRB ADHB Perkapita - Periode:", input$periode_adhb_p_line_simple),
       xaxis = list(title = ifelse(input$periode_adhb_p_line_simple == "Triwulanan", "Periode (Triwulanan)", "Tahun")),
       yaxis = list(title = "Nilai PDRB")
     )
@@ -279,33 +279,31 @@ output$line_adhb_perkapita_simple <- renderPlotly({
 
 # Tabel
 output$adhb_perkapita_table <- renderDT({
-  # kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
+  kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
+
+  tahun_range <- as.integer(input$tahun_adhb_p_line_simple)
+  kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
+                                  as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
   # 
-  # tahun_range <- as.integer(input$tahun_adhb_p_line_simple)
-  # kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
-  #                                 as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
-  # 
-  data_to_show <- adhb_perkapita 
-  # %>%
-  #   filter(flag == 1) %>%
-  #   select(c(kode, nama, all_of(kolom_terpilih))) %>%
-  #   tidyr::pivot_longer(
-  #     cols = -c(kode, nama),
-  #     names_to = "periode",
-  #     values_to = "nilai"
-  #   ) %>%
+  data_to_show <- adhb_perkapita %>%
+    filter(flag == 1) %>%
+    select(c(kode, nama, all_of(kolom_terpilih))) %>%
+    tidyr::pivot_longer(
+      cols = -c(kode, nama),
+      names_to = "periode",
+      values_to = "nilai"
+    ) %>%
   #   #   mutate(periode = gsub("_", ".", periode)) %>%
-  #   group_by(periode) %>%
-  #   summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop")
+    group_by(periode) %>%
+    summarise(nilai = sum(nilai, na.rm = TRUE), .groups = "drop")
   
   datatable(data_to_show, 
             options = list(
               pageLength = 10,         
               lengthMenu = c(10, 20, 50), 
               scrollX = TRUE,     
-              autoWidth = TRUE,    
-              columnDefs = list(list(width = '200px', targets = 2),
-                                list(width = '100%', targets = "_all"))
+              autoWidth = FALSE,    
+              columnDefs = list(list(width = '100%', targets = "_all"))
             ),
             rownames = FALSE) 
 })
