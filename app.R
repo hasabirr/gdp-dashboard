@@ -190,6 +190,25 @@ server <- function(input, output, session) {
     ) %>%
     ungroup()
   
+  # Share Data
+  triwulan_cols <- grep("^\\d{4}_\\d$", colnames(adhb), value = TRUE)
+  
+  # Hitung total triwulan untuk flag = 1
+  total_triwulan <- adhb %>%
+    filter(flag == 1) %>%
+    summarise(across(all_of(triwulan_cols), \(x) sum(x, na.rm = TRUE)))
+  
+  # Menghitung share per cell
+  # Hitung share untuk masing-masing triwulan
+  # Hitung share untuk masing-masing triwulan dalam persen
+  share <- adhb %>%
+    mutate(across(all_of(triwulan_cols), 
+                  ~ (.x / total_triwulan[[cur_column()]]) * 100, 
+                  .names = "Share_{.col}")) %>%
+    select(-all_of(triwulan_cols))
+  
+  
+  
   # SERVER SIDEBAR =============================================================
   output$pdrb_general <- renderMenu({
     # req(data_uploaded())
@@ -214,7 +233,7 @@ server <- function(input, output, session) {
   })
   
   output$share <- renderMenu({
-    menuItem("Share PDRB", tabName = "share_pdrb", icon = icon("cubes-stacked"))
+    menuItem("Share PDRB", tabName = "share", icon = icon("cubes-stacked"))
   })
   
   output$pdrb_perkapita <- renderMenu({
@@ -240,6 +259,7 @@ server <- function(input, output, session) {
   source("server/qtq.R", local = TRUE)
   source("server/yoy.R", local = TRUE)
   source("server/ctc.R", local = TRUE)
+  source("server/share.R", local = TRUE)
   source("server/download.R", local = TRUE)
   source("server/glosarium.R", local = TRUE)
   # lengkapi untuk source lainnya
