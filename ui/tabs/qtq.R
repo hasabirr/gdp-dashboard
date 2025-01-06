@@ -1,5 +1,9 @@
 tabItem(tabName = "qtq",
         fluidRow(
+          box(title = "Pertumbuhan Ekonomi Quarter-to-Quarter (QtQ)", status = "primary", solidHeader = TRUE, width = 12,
+              p("Pertumbuhan ekonomi QtQ dihitung menggunakan data PDRB ADHK"))
+        ),
+        fluidRow(
                 
                 box(title = "Filter", status = "primary", solidHeader = TRUE, width = 4,
                     selectInput("flag_qtq", "Pilih Flag:", choices = NULL),
@@ -12,13 +16,13 @@ tabItem(tabName = "qtq",
                     textOutput("nama_lapangan_usaha_qtq")
                 ),
                 box(title = "Pertumbuhan Ekonomi Quarter-to-Quarter (QtQ)", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("qtq_plot")
+                    withSpinner(plotlyOutput("qtq_plot"), type = 1)
                 )
         ),
         fluidRow(
                 box(
                         title = "Tabel Nilai Pertumbuhan Ekonnomi Quarter-to-Quarter (QtQ)", status = "primary", solidHeader = TRUE, width = 12,
-                        DT::DTOutput("qtq_table")
+                        withSpinner(DT::DTOutput("qtq_table"), type = 1)
                 )
         )
 )

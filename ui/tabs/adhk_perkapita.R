@@ -15,7 +15,7 @@ tabItem(tabName = "adhk_perkapita",
                     textOutput("nama_lapangan_usaha_adhk_perkapita")
                 ),
                 box(title = "PDRB ADHK Perkapita Menurut Kode, Tahun, dan Triwulan", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("adhk_perkapita_plot")
+                    withSpinner(plotlyOutput("adhk_perkapita_plot"), type = 1)
                 )
         ),
         fluidRow(
@@ -29,7 +29,7 @@ tabItem(tabName = "adhk_perkapita",
                     uiOutput("tahun_adhk_perkapita_line")
                 ),
                 box(title = "Total PDRB ADHK Perkapita Menurut Periode dan Kode", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("line_adhk_perkapita")
+                    withSpinner(plotlyOutput("line_adhk_perkapita"), type = 1)
                 )
         ),
         fluidRow(
@@ -38,13 +38,12 @@ tabItem(tabName = "adhk_perkapita",
                     uiOutput("tahun_adhk_perkapita_line_simple")
                 ),
                 box(title = "Total PDRB ADHK Perkapita Per Periode (Triwulan dan Tahunan)", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("line_adhk_perkapita_simple")
+                    withSpinner(plotlyOutput("line_adhk_perkapita_simple"), type = 1)
                 )
         ),
         fluidRow(
-                box(
-                        title = "Tabel PDRB ADHK Perkapita", status = "primary", solidHeader = TRUE, width = 12,
-                        DT::DTOutput("adhk_perkapita_table")
+                box(title = "Tabel PDRB ADHK Perkapita", status = "primary", solidHeader = TRUE, width = 12,
+                    withSpinner(DT::DTOutput("adhk_perkapita_table"), type = 1)
                 )
         )
 )

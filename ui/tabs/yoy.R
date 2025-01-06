@@ -1,5 +1,9 @@
 tabItem(tabName = "yoy",
         fluidRow(
+          box(title = "Pertumbuhan Ekonomi Year on Year (YoY)", status = "primary", solidHeader = TRUE, width = 12,
+              p("Pertumbuhan ekonomi YoY dihitung menggunakan data PDRB ADHK"))
+        ),
+        fluidRow(
                 
                 box(title = "Filter", status = "primary", solidHeader = TRUE, width = 4,
                     selectInput("flag_yoy", "Pilih Flag:", choices = NULL),
@@ -12,13 +16,13 @@ tabItem(tabName = "yoy",
                     textOutput("nama_lapangan_usaha_yoy")
                 ),
                 box(title = "Pertumbuhan Ekonomi Quarter-to-Quarter (YoY)", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("yoy_plot")
+                    withSpinner(plotlyOutput("yoy_plot"), type = 1)
                 )
         ),
         fluidRow(
                 box(
                         title = "Tabel Nilai Pertumbuhan Ekonnomi Quarter-to-Quarter (YoY)", status = "primary", solidHeader = TRUE, width = 12,
-                        DT::DTOutput("yoy_table")
+                        withSpinner(DT::DTOutput("yoy_table"), type = 1)
                 )
         )
 )

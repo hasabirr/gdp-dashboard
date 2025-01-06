@@ -278,10 +278,12 @@ output$line_adhb_simple <- renderPlotly({
 # Reactive value to store the selected dataset
 selected_data_adhb <- reactiveVal()
 
+selected_data_adhb(NULL)
+
 observeEvent(input$data_adhb_grafik1, {
   data_table_1_adhb <- adhb %>%
-    filter(flag == input$flag_line,
-           kode %in% input$kode_line)
+    filter(flag == input$flag_pdrb,
+           kode %in% input$kode_pdrb)
   selected_data_adhb(data_table_1_adhb)
 })
 

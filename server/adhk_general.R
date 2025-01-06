@@ -278,10 +278,12 @@ output$line_adhk_simple <- renderPlotly({
 # Reactive value to store the selected dataset
 selected_data_adhk <- reactiveVal()
 
+selected_data_adhk(NULL)
+
 observeEvent(input$data_adhk_grafik1, {
   data_table_1_adhk <- adhk %>%
-    filter(flag == input$flag_line,
-           kode %in% input$kode_line)
+    filter(flag == input$flag_adhk,
+           kode %in% input$kode_adhk)
   selected_data_adhk(data_table_1_adhk)
 })
 
@@ -293,8 +295,8 @@ observeEvent(input$data_adhk_grafik2_triwulanan, {
                                   as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
   
   data_table_2_adhk_triwulanan <- adhk %>%
-    filter(flag == input$flag_line,
-           kode %in% input$kode_line) %>%
+    filter(flag == input$flag_line_adhk,
+           kode %in% input$kode_line_adhk) %>%
     select(flag, kode, nama, all_of(kolom_terpilih))
   
   selected_data_adhk(data_table_2_adhk_triwulanan)
@@ -305,8 +307,8 @@ observeEvent(input$data_adhk_grafik2_tahunan, {
   nama_data <- adhk %>% select(kode, nama)
   
   data_table_2_adhk_tahunan <- adhk %>%
-    filter(flag == input$flag_line,
-           kode %in% input$kode_line) %>%
+    filter(flag == input$flag_line_adhk,
+           kode %in% input$kode_line_adhk) %>%
     tidyr::pivot_longer(cols = matches("^\\d{4}(_.*)?$"), 
                         names_to = "periode",
                         values_to = "nilai") %>%

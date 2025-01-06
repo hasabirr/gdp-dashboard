@@ -15,7 +15,7 @@ tabItem(tabName = "adhb_general",
                     textOutput("nama_lapangan_usaha")
                 ),
                 box(title = "Grafik 1 - PDRB ADHB Menurut Kode, Tahun, dan Triwulan", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("pdrb_plot")
+                    withSpinner(plotlyOutput("pdrb_plot"), type = 1)
                 )
         ),
         fluidRow(
@@ -29,7 +29,7 @@ tabItem(tabName = "adhb_general",
                     uiOutput("tahun_range_ui")
                 ),
                 box(title = "Grafik 2 - Total PDRB ADHB Menurut Periode dan Kode", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("line_adhb")
+                    withSpinner(plotlyOutput("line_adhb"), type = 1)
                 )
         ),
         fluidRow(
@@ -38,7 +38,7 @@ tabItem(tabName = "adhb_general",
                     uiOutput("tahun_range_ui_simple")
                 ),
                 box(title = "Grafik 3 - Total PDRB ADHB Per Periode (Triwulan dan Tahunan)", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("line_adhb_simple")
+                    withSpinner(plotlyOutput("line_adhb_simple"), type = 1)
                 )
         ),
         fluidRow(

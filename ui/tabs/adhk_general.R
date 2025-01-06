@@ -15,7 +15,7 @@ tabItem(tabName = "adhk_general",
                     textOutput("nama_lapangan_usaha_adhk")
                 ),
                 box(title = "Grafik 1 - PDRB ADHK Menurut Kode, Tahun, dan Triwulan", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("adhk_plot")
+                    withSpinner(plotlyOutput("adhk_plot"), type = 1)
                 )
         ),
         fluidRow(
@@ -29,7 +29,7 @@ tabItem(tabName = "adhk_general",
                     uiOutput("tahun_range_ui_adhk")
                 ),
                 box(title = "Grafik 2 - Total PDRB ADHK Menurut Periode dan Kode", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("line_adhk")
+                    withSpinner(plotlyOutput("line_adhk"), type = 1)
                 )
         ),
         fluidRow(
@@ -38,25 +38,33 @@ tabItem(tabName = "adhk_general",
                     uiOutput("tahun_range_ui_simple_adhk")
                 ),
                 box(title = "Grafik 3 - Total PDRB ADHK Per Periode (Triwulan dan Tahunan)", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("line_adhk_simple")
+                    withSpinner(plotlyOutput("line_adhk_simple"), type = 1)
                 ),
         ),
         fluidRow(
                 box(
                         title = "Pilih Jenis Data Untuk Ditampilkan (Klik Lagi Untuk Menerapkan Filter)", status = "primary", solidHeader = TRUE, width = 12,
+                        # div(
+                        #         style = "display: flex; align-items: center; gap: 30px; flex-wrap: wrap; color: white;",
+                        #         actionButton("data_adhk_grafik1", "Data Grafik 1", class = "btn-primary"),
+                        #         actionButton("data_adhk_grafik2_triwulanan", "Data Grafik 2 Triwulanan", class = "btn-primary"),
+                        #         actionButton("data_adhk_grafik2_tahunan", "Data Grafik 2 Tahunan", class = "btn-primary"),
+                        #         actionButton("data_adhk_grafik3_triwulanan", "Data Grafik 3 Triwulanan", class = "btn-primary"),
+                        #         actionButton("data_adhk_grafik3_tahunan", "Data Grafik 3 Tahunan", class = "btn-primary")
+                        # )
                         div(
-                                style = "display: flex; align-items: center; gap: 30px; flex-wrap: wrap; color: white;",
-                                actionButton("data_adhk_grafik1", "Data Grafik 1", class = "btn-primary"),
-                                actionButton("data_adhk_grafik2_triwulanan", "Data Grafik 2 Triwulanan", class = "btn-primary"),
-                                actionButton("data_adhk_grafik2_tahunan", "Data Grafik 2 Tahunan", class = "btn-primary"),
-                                actionButton("data_adhk_grafik3_triwulanan", "Data Grafik 3 Triwulanan", class = "btn-primary"),
-                                actionButton("data_adhk_grafik3_tahunan", "Data Grafik 3 Tahunan", class = "btn-primary")
+                          style = "display: flex; align-items: center; gap: 30px; flex-wrap: wrap;",
+                          actionButton("data_adhk_grafik1", "Data Grafik 1", class = "btn-primary"),
+                          actionButton("data_adhk_grafik2_triwulanan", "Data Grafik 2 Triwulanan", class = "btn-primary"),
+                          actionButton("data_adhk_grafik2_tahunan", "Data Grafik 2 Tahunan", class = "btn-primary"),
+                          actionButton("data_adhk_grafik3_triwulanan", "Data Grafik 3 Triwulanan", class = "btn-primary"),
+                          actionButton("data_adhk_grafik3_tahunan", "Data Grafik 3 Tahunan", class = "btn-primary")
                         )
                 ),
                 box(
                         # title = uiOutput("dynamic_box_title_adhk"), 
                         status = "primary", solidHeader = TRUE, width = 12,
-                        DT::DTOutput("adhk_table")
+                        withSpinner(DT::DTOutput("adhk_table"), type = 1)
                 )
         )
 )

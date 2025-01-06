@@ -12,7 +12,7 @@ tabItem(tabName = "laju_implisit",
                     textOutput("nama_lapangan_usaha_laju")
                 ),
                 box(title = "Grafik 1 Laju Implisit", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("line_laju")
+                    withSpinner(plotlyOutput("line_laju"), type = 1)
                 )
         ),
         fluidRow(
@@ -21,7 +21,7 @@ tabItem(tabName = "laju_implisit",
                     uiOutput("tahun_laju_simple")
                 ),
                 box(title = "Grafik 2 Laju Implisit", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("line_laju_simple")
+                    withSpinner(plotlyOutput("line_laju_simple"), type = 1)
                 )
         ),
         # Input Baris Pertama
@@ -41,9 +41,8 @@ tabItem(tabName = "laju_implisit",
         # Tabel Baris Kedua
         fluidRow(
           box(
-            title = uiOutput("dynamic_box_title"),
             status = "primary", solidHeader = TRUE, width = 12,
-            DT::DTOutput("laju_table")
+            withSpinner(DT::DTOutput("laju_table"), type = 1)
           )
         )
 )

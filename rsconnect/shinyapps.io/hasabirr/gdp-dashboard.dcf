@@ -1,0 +1,10 @@
+name: gdp-dashboard
+title:
+username: hasabirr
+account: hasabirr
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13657887
+bundleId: 9609656
+url: https://hasabirr.shinyapps.io/gdp-dashboard/
+version: 1

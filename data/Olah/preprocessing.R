@@ -3,7 +3,7 @@ library(stringr)
 library(readxl)
 
 # Sample data
-data <- read_excel("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/data/data_pdrb.xlsx", sheet = "kode")
+data <- read_excel("data/data_pdrb.xlsx", sheet = "kode")
 
 # Sample data
 # data <- data.frame(

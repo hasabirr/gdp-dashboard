@@ -1,5 +1,8 @@
 # Libraries
 library(shiny)
+library(shinycssloaders)
+library(waiter)
+library(shinyjs)
 library(shinydashboard)
 library(dplyr)
 library(plotly)
@@ -14,20 +17,67 @@ library(RColorBrewer)
 library(gsheet)
 library(readxl)
 library(dplyr)
+# library(googlesheets4)
 
 # UI
-ui <- dashboardPage(
-  source("ui/ui_header.R")$value,
-  source("ui/ui_sidebar.R")$value,
-  source("ui/ui_body.R")$value
+ui_header <- source("ui/ui_header.R")$value
+ui_sidebar <- source("ui/ui_sidebar.R")$value
+ui_body <- source("ui/ui_body.R")$value
+
+options(spinner.color="#0275D8", spinner.size=2)
+
+ui <- tagList(
+  useWaiter(),   # Initialize waiter
+  useShinyjs(),  # Enable JavaScript functionality
+  waiter_show_on_load(
+    html = tagList(
+      spin_puzzle(), # Animasi loading
+      br(),
+      h4("Sedang memuat aplikasi, mohon tunggu"), # Baris pertama
+      br(),
+      tags$i(style = "font-size: 14px;", # Baris kedua: quotes
+             paste0('"', sample(c(
+               "Success usually comes to those who are too busy to be looking for it.",
+               "Opportunities don't happen. You create them.",
+               "The harder you work for something, the greater you'll feel when you achieve it.",
+               "Great things never come from comfort zones.",
+               "Don't stop when you're tired. Stop when you're done.",
+               "Dream big and dare to fail.",
+               "The only limit to our realization of tomorrow is our doubts of today.",
+               "Act as if what you do makes a difference. It does."
+             ), 1), '"')
+      )
+    )
+  ),
+  dashboardPage(
+    header = ui_header,
+    sidebar = ui_sidebar,
+    body = ui_body
+  )
 )
+  
+
 
 # SERVER
 server <- function(input, output, session) {
 
+  # delay(3000, {
+  #   
+  # })  
+  # options(gargle_oauth_cache = TRUE)
+  
+  # Set waktu tunggu lebih lama
+  # options(gargle_timeout = 600) # 10 menit
   # DATA ADHB ==================================================================
-  # adhb <- gsheet2tbl('docs.google.com/spreadsheets/d/1zX-sS-QRhgQw8N5I0OU-Su06NBRm66J1/edit?gid=326092188#gid=326092188') %>%
-  adhb <- read_xlsx("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/data/data_pdrb_adhb.xlsx") %>%
+  # csv_text <- 
+  # Membaca CSV sebagai data frame
+  adhb <- read.csv(text = gsheet2text('docs.google.com/spreadsheets/d/1zX-sS-QRhgQw8N5I0OU-Su06NBRm66J1/edit?gid=326092188#gid=326092188', format = "csv"), stringsAsFactors = TRUE, fileEncoding = "ISO-8859-1")
+  names(adhb) <- gsub("^X", "", names(adhb)) 
+  # adhb <- gsheet2tbl()
+  # adhb <- read_xlsx("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/data/data_pdrb_adhb.xlsx") %>%
+  
+  req(adhb)
+  adhb <- adhb %>%
     mutate(kode = factor(kode)) %>%
     mutate(across(4:ncol(.), ~ round(., 4)))
   
@@ -58,8 +108,11 @@ server <- function(input, output, session) {
     mutate(periode = as.character(tahun)) %>% select(-tahun)
   
   # DATA ADHK ==================================================================
-  # adhk <- gsheet2tbl('docs.google.com/spreadsheets/d/1FeTRkKfhJc4z29vP5ftXL2hNBolYTtQU/edit?gid=1723490359#gid=1723490359') %>%
-  adhk <- read_xlsx("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/data/data_pdrb_adhk.xlsx") %>%
+  # adhk <- gsheet2tbl('docs.google.com/spreadsheets/d/1FeTRkKfhJc4z29vP5ftXL2hNBolYTtQU/edit?gid=1723490359#gid=1723490359')
+  adhk <- read.csv(text = gsheet2text('docs.google.com/spreadsheets/d/1FeTRkKfhJc4z29vP5ftXL2hNBolYTtQU/edit?gid=1723490359#gid=1723490359', format = "csv"), stringsAsFactors = FALSE, fileEncoding = "ISO-8859-1")
+  names(adhk) <- gsub("^X", "", names(adhk)) 
+  req(adhk)
+  adhk <- adhk %>%
     mutate(kode = factor(kode)) %>%
     mutate(across(4:ncol(.), ~ round(., 4)))
   
@@ -88,8 +141,11 @@ server <- function(input, output, session) {
     mutate(periode = as.character(tahun)) %>% select(-tahun)
   
   # DATA PERKAPITA =============================================================
+  population <- read.csv(text = gsheet2text('docs.google.com/spreadsheets/d/1ACQnSbPG6oDPEc0o3oVF-gdyoImhSXzLe0rS3d_xxiQ/edit?gid=0#gid=0', format = "csv"), stringsAsFactors = FALSE, fileEncoding = "ISO-8859-1")
   # population <- gsheet2tbl('docs.google.com/spreadsheets/d/1ACQnSbPG6oDPEc0o3oVF-gdyoImhSXzLe0rS3d_xxiQ/edit?gid=0#gid=0')
-  population <- read_xlsx("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/data/population.xlsx")
+  # population <- read_xlsx("E:/OneDrive/Work/Training/BPS Orientation/PDRB/gdp-dashboard/data/population.xlsx")
+  
+  req(population)
   calculate_per_capita <- function(adhb, population) {
     # Menentukan kolom-kolom yang mengandung data tahun secara dinamis
     tahun_columns <- grep("^\\d{4}", names(adhb), value = TRUE)
@@ -207,7 +263,7 @@ server <- function(input, output, session) {
                   .names = "Share_{.col}")) %>%
     select(-all_of(triwulan_cols))
   
-  
+  waiter_hide()
   
   # SERVER SIDEBAR =============================================================
   output$pdrb_general <- renderMenu({

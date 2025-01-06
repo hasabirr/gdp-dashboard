@@ -222,6 +222,19 @@ output$line_laju_simple <- renderPlotly({
 # Reactive value to store the selected dataset
 selected_data <- reactiveVal()
 
+# kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)
+# 
+# tahun_range <- as.integer(input$tahun_laju)
+# kolom_terpilih <- kolom_tahun[as.integer(sub("_.*", "", kolom_tahun)) >= tahun_range[1] &
+#                                 as.integer(sub("_.*", "", kolom_tahun)) <= tahun_range[2]]
+# 
+# data_implisit_def <- implisit %>%
+#   filter(flag == input$flag_laju,
+#          kode %in% input$kode_laju) %>%
+#   filter(periode %in% all_of(kolom_terpilih))
+
+selected_data(NULL)
+
 # Observe button clicks to update the dataset
 observeEvent(input$data_grafik1_triwulanan, {
   kolom_tahun <- grep("^\\d{4}_", names(adhb), value = TRUE)

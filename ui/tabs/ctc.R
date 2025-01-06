@@ -1,7 +1,9 @@
 tabItem(tabName = "ctc",
         fluidRow(
-                
-                box(title = "Filter", status = "primary", solidHeader = TRUE, width = 4,
+          box(title = "Pertumbuhan Ekonomi Cumulative (CtC)", status = "primary", solidHeader = TRUE, width = 12,
+              p("Pertumbuhan ekonomi CtC dihitung menggunakan data PDRB ADHK"))
+        ),
+        fluidRow(box(title = "Filter", status = "primary", solidHeader = TRUE, width = 4,
                     selectInput("flag_ctc", "Pilih Flag:", choices = NULL),
                     checkboxInput("select_all_ctc", "Pilih Semua Kode", value = FALSE), 
                     div(style = "max-height: 80px; overflow-y: auto;",
@@ -12,13 +14,13 @@ tabItem(tabName = "ctc",
                     textOutput("nama_lapangan_usaha_ctc")
                 ),
                 box(title = "Pertumbuhan Ekonomi Cumulative (CtC)", status = "primary", solidHeader = TRUE, width = 8,
-                    plotlyOutput("ctc_plot")
+                    withSpinner(plotlyOutput("ctc_plot"), type = 1)
                 )
         ),
         fluidRow(
                 box(
-                        title = "Tabel Nilai Pertumbuhan Ekonnomi Cumulative (CtC)", status = "primary", solidHeader = TRUE, width = 12,
-                        DT::DTOutput("ctc_table")
+                        title = "Tabel Nilai Pertumbuhan Ekonomi Cumulative (CtC)", status = "primary", solidHeader = TRUE, width = 12,
+                        withSpinner(DT::DTOutput("ctc_table"), type = 1)
                 )
         )
 )
